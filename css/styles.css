@@ -153,48 +153,98 @@ section { padding: 100px 5%; border-bottom: 1px solid var(--border); }
 #ai-loader { display: none; position: absolute; width: 50px; height: 50px; border: 3px solid rgba(210, 180, 140, 0.1); border-top: 3px solid var(--beige); border-radius: 50%; animation: spin 1s infinite; z-index: 30; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.enzo-panel { display: flex; flex-direction: column; gap: 14px; }
-.enzo-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-.enzo-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-    font-weight: 700; padding: 5px 12px; border-radius: 20px;
-    border: 1px solid var(--beige); color: var(--beige);
-    background: rgba(210,180,140,0.05);
+/* ── ENZO PANEL — Apple Liquid Glass ── */
+.enzo-panel {
+    display: flex; flex-direction: column; gap: 16px;
+    background: rgba(128,128,128,0.04);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 28px; padding: 28px;
+    border: 1px solid rgba(128,128,128,0.08);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.1);
 }
-.enzo-badge::before { content: '◉'; font-size: 8px; animation: enzoPulse 2s infinite; }
-@keyframes enzoPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+body.night-mode .enzo-panel {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.04);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.02);
+}
 
-.enzo-feed { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding-right: 6px; }
+.enzo-glass-header { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+.enzo-avatar {
+    width: 42px; height: 42px; border-radius: 15px;
+    background: linear-gradient(135deg, var(--beige), #c4a06a);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; box-shadow: 0 4px 12px rgba(210,180,140,0.3);
+}
+.enzo-name { font-size: 14px; font-weight: 600; letter-spacing: -0.3px; }
+.enzo-ver { font-size: 10px; opacity: 0.35; letter-spacing: 0.2px; margin-top: 1px; }
+
+.enzo-feed {
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 280px; overflow-y: auto; padding-right: 4px;
+}
+.enzo-feed::-webkit-scrollbar { width: 4px; }
+.enzo-feed::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.15); border-radius: 4px; }
+
 .enzo-msg {
-    background: var(--bg); border-radius: 18px; padding: 16px 20px;
-    border-left: 3px solid var(--beige);
-    font-size: 13px; line-height: 1.7; letter-spacing: 0.3px;
-    opacity: 0; transform: translateY(12px);
-    animation: enzoIn 0.5s ease forwards;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    padding: 14px 16px; border-radius: 18px;
+    background: rgba(128,128,128,0.04);
+    font-size: 12.5px; line-height: 1.55; letter-spacing: -0.1px;
+    opacity: 0; transform: translateY(8px) scale(0.97);
+    animation: enzoMsgIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: background 0.3s;
+    max-width: 90%;
 }
-.enzo-msg .enzo-label {
-    font-size: 9px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--beige); margin-bottom: 4px;
+.enzo-msg.processing {
+    background: rgba(0,242,255,0.06);
+    border: 1px solid rgba(0,242,255,0.12);
 }
-.enzo-msg.processing { border-left-color: var(--electric-cyan); }
-.enzo-msg.processing .enzo-label { color: var(--electric-cyan); }
-.enzo-msg.done { border-left-color: var(--beige); opacity: 0.8; }
-@keyframes enzoIn { to { opacity: 1; transform: translateY(0); } }
+body.night-mode .enzo-msg.processing { background: rgba(0,242,255,0.04); }
+.enzo-msg.done { background: rgba(210,180,140,0.05); }
+body.night-mode .enzo-msg.done { background: rgba(210,180,140,0.03); }
 
-.enzo-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-.btn-enzo {
-    padding: 12px 18px; border-radius: 14px; font-size: 10px; font-weight: 700;
-    letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
-    background: var(--text); color: var(--bg); border: none;
-    transition: all 0.3s; white-space: nowrap;
+.enzo-msg-text { }
+@keyframes enzoMsgIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+.enzo-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.enzo-btn-primary {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 18px; border-radius: 100px;
+    background: var(--text); color: var(--bg);
+    border: none; font-size: 11px; font-weight: 600;
+    letter-spacing: -0.2px; cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
-.btn-enzo:hover { opacity: 0.75; transform: translateY(-1px); }
-.btn-enzo.outline {
-    background: none; border: 1.5px solid var(--border); color: var(--text);
+.enzo-btn-primary:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.enzo-btn-primary:active { transform: scale(0.97); }
+
+.enzo-btn-ghost {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 10px 16px; border-radius: 100px;
+    background: rgba(128,128,128,0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(128,128,128,0.08);
+    color: var(--text); font-size: 11px; font-weight: 500;
+    letter-spacing: -0.2px; cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.btn-enzo.outline:hover { border-color: var(--beige); color: var(--beige); }
+.enzo-btn-ghost:hover { background: rgba(128,128,128,0.12); border-color: rgba(128,128,128,0.16); }
+.enzo-btn-ghost:active { transform: scale(0.97); }
+
+.enzo-token-input {
+    width: 100%; padding: 10px 14px; border-radius: 100px;
+    background: rgba(128,128,128,0.04);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(128,128,128,0.08);
+    color: var(--text); font-size: 10px; font-family: "SF Mono", "Cascadia Code", monospace;
+    outline: none; transition: all 0.3s; letter-spacing: 0.2px;
+}
+.enzo-token-input:focus { border-color: var(--beige); background: rgba(210,180,140,0.04); }
+.enzo-token-input::placeholder { opacity: 0.25; }
 
 /* ── 3D VIEWER ── */
 #viewer3d { width: 100%; aspect-ratio: 16/9; max-height: 650px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); background: #000; cursor: grab; position: relative; }
@@ -275,6 +325,7 @@ input:focus { border-color: var(--beige); }
     .weather-dash { flex-direction: column; gap: 25px; text-align: center; }
     .weather-advice { border-left: none; border-top: 2px solid var(--text); padding: 20px 0 0; max-width: 100%; }
     .weather-temp { font-size: 52px; }
+    .enzo-panel { padding: 20px; gap: 12px; }
     .enzo-log { max-height: 200px; }
     #viewer3d { aspect-ratio: 1/1; max-height: 400px; }
     #russia-map { height: 350px; border-radius: 20px; }

@@ -194,25 +194,35 @@
             <div class="mirror">
                 <div class="scan-line"></div>
                 <div id="ai-loader"></div>
-                <img src="new_robot.webp" id="v-port" alt="ENZO Scanner" fetchpriority="high">
+                <img src="new_robot.png" id="v-port" alt="ENZO Scanner" fetchpriority="high">
             </div>
             <div class="enzo-panel">
-                <div class="enzo-header">
-                    <span class="enzo-badge">ENZO Assistant</span>
-                    <span style="font-size:9px; letter-spacing:1px; opacity:0.3;">v3.2</span>
+                <div class="enzo-glass-header">
+                    <div class="enzo-avatar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div>
+                        <div class="enzo-name">ENZO</div>
+                        <div class="enzo-ver">Neural Assistant · v3.2</div>
+                    </div>
                 </div>
                 <div class="enzo-feed" id="enzo-feed">
-                    <div class="enzo-msg"><span class="enzo-label">ENZO</span>Оптические системы активны. Ожидаю данные.</div>
+                    <div class="enzo-msg"><div class="enzo-msg-text">Оптические системы активны.</div></div>
                 </div>
                 <div class="enzo-actions">
-                    <button class="btn-enzo" onclick="loadMax()">Загрузить фото</button>
-                    <button class="btn-enzo" onclick="changeLight('day')">☀ День</button>
-                    <button class="btn-enzo" onclick="changeLight('night')">🌙 Ночь</button>
-                    <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">Deep AI</button>
+                    <button class="enzo-btn-primary" onclick="loadMax()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Загрузить
+                    </button>
+                    <button class="enzo-btn-ghost" onclick="changeLight('day')">☀ День</button>
+                    <button class="enzo-btn-ghost" onclick="changeLight('night')">🌙 Ночь</button>
+                    <button class="enzo-btn-ghost" onclick="enzoDeepAnalysis()">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Deep AI
+                    </button>
                 </div>
-                <div style="display:flex; gap:6px; margin-top:6px; align-items:center;">
-                    <input type="text" id="hf-token-input" placeholder="HF токен (сохраняется локально)" style="flex:1; margin:0; padding:8px 12px; font-size:9px; border-radius:8px; font-family:monospace;" onchange="localStorage.setItem('hf_token', this.value.trim())">
-                </div>
+                <input type="text" id="hf-token-input" placeholder="HuggingFace API token" class="enzo-token-input" onchange="localStorage.setItem('hf_token', this.value.trim())">
+            </div>
             </div>
         </div>
     </section>

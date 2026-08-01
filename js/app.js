@@ -120,7 +120,7 @@ window.enzoLog = function (msg, type) {
     type = type || '';
     var div = document.createElement('div');
     div.className = 'enzo-msg' + (type ? ' ' + type : '');
-    div.innerHTML = '<span class="enzo-label">ENZO</span>' + msg;
+    div.innerHTML = '<div class="enzo-msg-text">' + msg + '</div>';
     feed.appendChild(div);
     feed.scrollTop = feed.scrollHeight;
     return div;
