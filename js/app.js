@@ -276,57 +276,77 @@ function fetchWeather() {
         });
 }
 
-// ── LEAFLET RUSSIA MAP ──
+// ── CUSTOM DOT MAP ──
 function initMap() {
     var mapEl = document.getElementById('russia-map');
     if (!mapEl) return;
     var isNight = document.body.classList.contains('night-mode');
-    var map = L.map('russia-map', { zoomControl: true, scrollWheelZoom: true }).setView([56.5, 52], 4);
+
+    var map = L.map('russia-map', {
+        zoomControl: false,
+        scrollWheelZoom: true,
+        attributionControl: false,
+        dragging: true,
+        doubleClickZoom: false
+    }).setView([56.5, 52], 4);
+
     L.tileLayer(isNight
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OSM',
-        maxZoom: 12
+        ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+        maxZoom: 10,
+        minZoom: 3
     }).addTo(map);
 
     var cities = [
-        { name: '\u041c\u043e\u0441\u043a\u0432\u0430', lat: 55.75, lng: 37.62, hq: false },
-        { name: '\u0421\u0430\u043d\u043a\u0442-\u041f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433', lat: 59.93, lng: 30.34, hq: false },
-        { name: '\u041d\u0438\u0436\u043d\u0438\u0439 \u041d\u043e\u0432\u0433\u043e\u0440\u043e\u0434', lat: 56.33, lng: 44.00, hq: false },
-        { name: '\u041a\u0430\u0437\u0430\u043d\u044c', lat: 55.79, lng: 49.12, hq: false },
-        { name: '\u0421\u0430\u043c\u0430\u0440\u0430', lat: 53.20, lng: 50.15, hq: false },
-        { name: '\u0412\u043e\u0440\u043e\u043d\u0435\u0436', lat: 51.67, lng: 39.18, hq: false },
-        { name: '\u0420\u043e\u0441\u0442\u043e\u0432-\u043d\u0430-\u0414\u043e\u043d\u0443', lat: 47.23, lng: 39.72, hq: false },
-        { name: '\u041a\u0440\u0430\u0441\u043d\u043e\u0434\u0430\u0440', lat: 45.04, lng: 38.98, hq: false },
-        { name: '\u0412\u043e\u043b\u0433\u043e\u0433\u0440\u0430\u0434', lat: 48.71, lng: 44.51, hq: false },
-        { name: '\u0423\u0444\u0430', lat: 54.74, lng: 55.97, hq: false },
-        { name: '\u041f\u0435\u0440\u043c\u044c', lat: 58.01, lng: 56.25, hq: false },
-        { name: '\u0427\u0435\u043b\u044f\u0431\u0438\u043d\u0441\u043a', lat: 55.16, lng: 61.44, hq: false },
-        { name: '\u0419\u043e\u0448\u043a\u0430\u0440-\u041e\u043b\u0430 \u2605 HQ', lat: 56.63, lng: 47.89, hq: true },
-        { name: '\u0422\u0443\u043b\u0430', lat: 54.20, lng: 37.62, hq: false },
-        { name: '\u042f\u0440\u043e\u0441\u043b\u0430\u0432\u043b\u044c', lat: 57.63, lng: 39.87, hq: false },
-        { name: '\u0420\u044f\u0437\u0430\u043d\u044c', lat: 54.63, lng: 39.69, hq: false },
-        { name: '\u0422\u0432\u0435\u0440\u044c', lat: 56.86, lng: 35.92, hq: false },
-        { name: '\u041a\u0430\u043b\u0443\u0433\u0430', lat: 54.53, lng: 36.28, hq: false },
-        { name: '\u0412\u043b\u0430\u0434\u0438\u043c\u0438\u0440', lat: 56.14, lng: 40.40, hq: false },
-        { name: '\u0421\u043e\u0447\u0438', lat: 43.59, lng: 39.73, hq: false },
-        // Italy
-        { name: 'Palermo, Italia', lat: 38.12, lng: 13.36, hq: false },
-        { name: 'Catania, Italia', lat: 37.50, lng: 15.09, hq: false },
+        { name: 'Москва', lat: 55.75, lng: 37.62, region: 'center' },
+        { name: 'Санкт-Петербург', lat: 59.93, lng: 30.34, region: 'nw' },
+        { name: 'Нижний Новгород', lat: 56.33, lng: 44.00, region: 'volga' },
+        { name: 'Казань', lat: 55.79, lng: 49.12, region: 'volga' },
+        { name: 'Самара', lat: 53.20, lng: 50.15, region: 'volga' },
+        { name: 'Воронеж', lat: 51.67, lng: 39.18, region: 'south' },
+        { name: 'Ростов-на-Дону', lat: 47.23, lng: 39.72, region: 'south' },
+        { name: 'Краснодар', lat: 45.04, lng: 38.98, region: 'south' },
+        { name: 'Волгоград', lat: 48.71, lng: 44.51, region: 'south' },
+        { name: 'Уфа', lat: 54.74, lng: 55.97, region: 'ural' },
+        { name: 'Пермь', lat: 58.01, lng: 56.25, region: 'ural' },
+        { name: 'Челябинск', lat: 55.16, lng: 61.44, region: 'ural' },
+        { name: 'Йошкар-Ола', lat: 56.63, lng: 47.89, region: 'hq' },
+        { name: 'Тула', lat: 54.20, lng: 37.62, region: 'center' },
+        { name: 'Ярославль', lat: 57.63, lng: 39.87, region: 'center' },
+        { name: 'Рязань', lat: 54.63, lng: 39.69, region: 'center' },
+        { name: 'Тверь', lat: 56.86, lng: 35.92, region: 'center' },
+        { name: 'Калуга', lat: 54.53, lng: 36.28, region: 'center' },
+        { name: 'Владимир', lat: 56.14, lng: 40.40, region: 'center' },
+        { name: 'Сочи', lat: 43.59, lng: 39.73, region: 'south' },
+        { name: 'Palermo, Italia', lat: 38.12, lng: 13.36, region: 'italy' },
+        { name: 'Catania, Italia', lat: 37.50, lng: 15.09, region: 'italy' },
     ];
 
     cities.forEach(function (c) {
-        var color = c.hq ? 'var(--electric-cyan)' : 'var(--beige)';
-        var size = c.hq ? 16 : 12;
+        var isHQ = c.region === 'hq';
+        var isItaly = c.region === 'italy';
+        var size = isHQ ? 14 : isItaly ? 9 : 10;
+        var color = isHQ ? 'var(--electric-cyan)' : isItaly ? 'var(--beige)' : 'var(--text)';
+        var shadow = isHQ ? '0 0 16px var(--electric-cyan), 0 0 32px rgba(0,242,255,0.3)' : '0 0 6px rgba(0,0,0,0.2)';
+        var html = '<div style="width:' + size + 'px;height:' + size + 'px;background:' + color + ';border-radius:50%;box-shadow:' + shadow + ';transition:transform 0.3s;"></div>';
+
         var icon = L.divIcon({
-            className: 'palermo-marker',
-            html: '<div style="width:' + size + 'px;height:' + size + 'px;background:' + color + ';border:2px solid var(--text);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 ' + (c.hq ? 12 : 6) + 'px ' + color + ';"></div>',
+            className: 'pdot',
+            html: html,
             iconSize: [size, size],
-            iconAnchor: [size / 2, size / 2]
+            iconAnchor: [size/2, size/2]
         });
-        L.marker([c.lat, c.lng], { icon: icon })
-            .addTo(map)
-            .bindPopup('<b>' + c.name + '</b><br><span style="font-size:10px;opacity:0.6;">Palermo Hub</span>');
+
+        var marker = L.marker([c.lat, c.lng], { icon: icon }).addTo(map);
+        if (!isItaly) {
+            marker.bindTooltip(c.name, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -size],
+                className: 'pdot-label',
+                opacity: 0.9
+            });
+        }
     });
 }
 

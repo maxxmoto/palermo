@@ -256,7 +256,16 @@ body.night-mode .enzo-msg.done { background: rgba(210,180,140,0.03); }
 .viewer-dot.active { background: var(--text); opacity: 1; }
 
 /* ── MAP ── */
-#russia-map { width: 100%; height: 550px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); z-index: 1; }
+#russia-map { width: 100%; height: 550px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); z-index: 1; background: #f5f3ef; }
+body.night-mode #russia-map { background: #111; }
+.pdot-label {
+    background: var(--bg) !important; color: var(--text) !important;
+    border: 1px solid var(--border) !important; border-radius: 8px !important;
+    padding: 4px 10px !important; font-size: 10px !important;
+    font-family: "Helvetica Neue", Arial, sans-serif !important;
+    letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+.pdot-label::before { border-top-color: var(--border) !important; }
 
 /* ── FAQ ── */
 .faq-item { border-bottom: 1px solid var(--border); padding: 30px 0; cursor: pointer; }
