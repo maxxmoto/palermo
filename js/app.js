@@ -281,11 +281,9 @@ function fetchWeather() {
             var feels = Math.round(c.feelslike_c);
             var humidity = c.humidity;
             var wind = Math.round(c.wind_kph / 3.6);
-            var uv = c.uv;
             var label = c.condition.text;
-            document.getElementById('w-icon').innerHTML = '<img src="https:' + c.condition.icon + '" alt="' + label + '" style="width:70px;height:70px;">';
             document.getElementById('w-temp').innerHTML = (temp > 0 ? '+' : '') + temp + '\u00b0C';
-            document.getElementById('w-details').innerHTML = label + ' \u00b7 \u041e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + (feels > 0 ? '+' : '') + feels + '\u00b0C \u00b7 \u0412\u043b\u0430\u0436\u043d\u043e\u0441\u0442\u044c ' + humidity + '% \u00b7 \u0412\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441 \u00b7 UV ' + uv;
+            document.getElementById('w-details').innerHTML = label + ' \u00b7 \u041e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + (feels > 0 ? '+' : '') + feels + '\u00b0C \u00b7 \u0412\u043b\u0430\u0436\u043d\u043e\u0441\u0442\u044c ' + humidity + '% \u00b7 \u0412\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441';
             var advice = '';
             if (temp <= -10) advice = '\u042d\u043a\u0441\u0442\u0440\u0435\u043c\u0430\u043b\u044c\u043d\u044b\u0439 \u0445\u043e\u043b\u043e\u0434. Aero Jacket + Armor v2.';
             else if (temp <= 0) advice = '\u041c\u043e\u0440\u043e\u0437\u043d\u043e. Aero Jacket + Glovo Gloves.';
@@ -295,7 +293,6 @@ function fetchWeather() {
             else advice = '\u0416\u0430\u0440\u043a\u043e. \u041c\u0438\u043d\u0438\u043c\u0443\u043c \u0441\u043b\u043e\u0451\u0432.';
             if (label.toLowerCase().indexOf('\u0434\u043e\u0436\u0434') !== -1 || label.toLowerCase().indexOf('\u043b\u0438\u0432\u0435\u043d\u044c') !== -1) advice += ' \u041e\u0441\u0430\u0434\u043a\u0438 \u2014 \u0432\u043e\u0434\u043e\u043e\u0442\u0442\u0430\u043b\u043a\u0438\u0432\u0430\u044e\u0449\u0430\u044f \u043f\u0440\u043e\u043f\u0438\u0442\u043a\u0430.';
             if (wind >= 10) advice += ' \u0412\u0435\u0442\u0435\u0440 \u2014 \u0430\u044d\u0440\u043e\u0434\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u043a\u0440\u0438\u0442\u0438\u0447\u043d\u0430.';
-            if (uv >= 6) advice += ' UV \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u2014 \u0437\u0430\u0449\u0438\u0442\u0430.';
             document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> ' + advice;
             enzoLog(label + ', ' + temp + '\u00b0C (\u043e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + feels + '\u00b0C), \u0432\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441.', 'done');
             setWeatherVideo(label, data.location.localtime);
@@ -414,6 +411,16 @@ var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
+
+// Auto-colorize grayscale images on scroll
+var colorObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+        if (e.isIntersecting) e.target.classList.add('colored');
+    });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.f-img-box img, .fob-showcase img, .partner-img-box img').forEach(function (el) {
+    colorObserver.observe(el);
+});
 
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
 window.onload = function () { window.scrollTo(0, 0); };

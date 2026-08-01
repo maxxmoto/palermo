@@ -137,12 +137,14 @@ section { padding: 100px 5%; border-bottom: 1px solid var(--border); }
 /* ── ORIGINS ── */
 .founders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px; align-items: start; }
 .f-img-box { width: 100%; aspect-ratio: 3/4; background: var(--gray); border-radius: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); }
-.f-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); transition: filter 1s; }
-.f-img-box:hover img { filter: grayscale(0); }
+.f-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); transition: filter 1.2s; }
+.f-img-box img.colored { filter: grayscale(0); }
+.founders-grid img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); transition: filter 1.2s; }
+.founders-grid img.colored { filter: grayscale(0); }
 .founder-name { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; font-weight: bold; text-align: center; }
 .fob-showcase { width: 100%; aspect-ratio: 16/9; max-height: 600px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); background: var(--gray); display: flex; align-items: center; justify-content: center; }
 .fob-showcase img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 1.5s; }
-.fob-showcase:hover img { filter: grayscale(0); }
+.fob-showcase img.colored { filter: grayscale(0); }
 
 /* ── ENZO LAB ── */
 .lab-box { background: var(--gray); border-radius: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; padding: 50px; align-items: start; }
@@ -291,8 +293,8 @@ input:focus { border-color: var(--beige); }
 /* ── PARTNER ── */
 .partner-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
 .partner-img-box { aspect-ratio: 3/4; max-height: 550px; border-radius: 30px; border: 1px solid var(--border); overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; }
-.partner-img-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 1s; }
-.partner-img-box:hover img { filter: grayscale(0); }
+.partner-img-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 1.2s; }
+.partner-img-box img.colored { filter: grayscale(0); }
 .partner-text { font-size: 18px; line-height: 1.8; font-weight: 300; border-left: 3px solid var(--text); padding-left: 35px; }
 
 /* ── WEATHER ── */
