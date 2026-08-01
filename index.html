@@ -10,6 +10,9 @@
     <meta property="og:type" content="website">
     <title>PALERMO STUDIO | OS 2026</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <script type="importmap">
+        { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+    </script>
     <style>
         :root {
             --bg: #ffffff; --text: #000000; --border: #e8e8e8;
@@ -41,7 +44,6 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        /* HEADER */
         header {
             position: fixed; top: 0; width: 100%; z-index: 1000;
             padding: 20px 5%; display: flex; justify-content: space-between; align-items: center;
@@ -60,7 +62,6 @@
         body.thermal-active .btn-mode { border-color: var(--electric-cyan); color: var(--electric-cyan); }
         body.thermal-active .btn-mode:hover { background: var(--electric-cyan); color: #000; }
 
-        /* SIDEBARS */
         #side-cart, #auth-modal, #spec-modal {
             position: fixed; right: -450px; top: 0; width: 450px; max-width: 100vw;
             height: 100%; background: var(--bg); z-index: 10001;
@@ -74,15 +75,12 @@
             margin-bottom: 30px; display: inline-block; transition: opacity 0.3s;
         }
         .close-trigger:hover { opacity: 0.8; }
-
-        /* OVERLAY */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.3); z-index: 10000; display: none;
         }
         .overlay.active { display: block; }
 
-        /* HERO */
         .hero {
             height: 100vh; display: flex; flex-direction: column;
             align-items: center; justify-content: center; text-align: center;
@@ -104,14 +102,12 @@
         }
         .hero-nav a:hover { opacity: 0.5; }
 
-        /* SECTIONS */
         section { padding: 100px 5%; border-bottom: 1px solid var(--border); }
         .section-label {
             font-size: 10px; letter-spacing: 10px; text-transform: uppercase;
             text-align: center; display: block; margin-bottom: 60px; opacity: 0.5; font-weight: bold;
         }
 
-        /* CATALOG */
         .catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
         .card { text-align: center; }
         .img-wrap {
@@ -122,8 +118,6 @@
         .gear-img { max-width: 85%; max-height: 85%; object-fit: contain; transition: transform 0.6s cubic-bezier(0.15, 0, 0.15, 1); }
         .card:hover .gear-img { transform: scale(1.08); }
         .price-tag { font-size: 11px; letter-spacing: 2px; margin: 15px 0; font-weight: bold; opacity: 0.6; }
-
-        /* SIZE SELECTOR */
         .size-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
         .size-btn {
             width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
@@ -132,7 +126,6 @@
         }
         .size-btn:hover, .size-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-        /* LOOK BUILDER */
         .builder-container {
             display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
             max-width: 1200px; margin: 0 auto;
@@ -146,7 +139,6 @@
         .item-row.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
         .item-thumb { width: 55px; height: 55px; border-radius: 10px; object-fit: contain; background: #fff; padding: 4px; }
 
-        /* THE CLUB */
         #club-section {
             background: var(--gray); text-align: center; position: relative;
             min-height: 350px; border-radius: 60px; margin: 0 5%;
@@ -164,7 +156,6 @@
         }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(128,128,128,0.2); } 100% { box-shadow: 0 0 0 25px rgba(128,128,128,0); } }
 
-        /* ORIGINS */
         .founders-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
             margin-bottom: 60px; align-items: start;
@@ -183,7 +174,6 @@
             font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
             margin-top: 20px; font-weight: bold; text-align: center;
         }
-
         .fob-showcase {
             width: 100%; aspect-ratio: 16/9; max-height: 600px; border-radius: 30px;
             overflow: hidden; border: 1px solid var(--border); background: var(--gray);
@@ -195,11 +185,11 @@
         }
         .fob-showcase:hover img { filter: grayscale(0); }
 
-        /* SCANNER */
+        /* ENZO LAB 2.0 */
         .lab-box {
             background: var(--gray); border-radius: 60px;
             display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
-            padding: 50px; align-items: center;
+            padding: 50px; align-items: start;
         }
         .mirror {
             aspect-ratio: 3/4; max-height: 600px; border-radius: 30px;
@@ -222,6 +212,67 @@
             animation: spin 1s infinite; z-index: 30;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .enzo-panel { display: flex; flex-direction: column; gap: 16px; }
+        .enzo-log {
+            background: #000; border-radius: 16px; padding: 20px; min-height: 180px;
+            font-family: "Courier New", monospace; font-size: 12px; line-height: 1.9;
+            color: var(--electric-cyan); border: 1px solid #1a3a4a;
+            overflow-y: auto; max-height: 300px;
+        }
+        .enzo-log .ts { opacity: 0.4; font-size: 10px; }
+        .enzo-log .line { margin-bottom: 4px; }
+        .enzo-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-enzo {
+            padding: 10px 16px; border-radius: 10px; font-size: 10px; font-weight: bold;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            background: var(--text); color: var(--bg); border: none;
+            transition: opacity 0.3s; white-space: nowrap;
+        }
+        .btn-enzo:hover { opacity: 0.7; }
+        .btn-enzo.outline {
+            background: none; border: 1px dashed var(--text); color: var(--text);
+        }
+        body.thermal-active .btn-enzo { background: var(--electric-cyan); color: #000; }
+        body.thermal-active .btn-enzo.outline { background: none; border-color: var(--electric-cyan); color: var(--electric-cyan); }
+
+        /* WEATHER DASHBOARD */
+        .weather-dash {
+            display: flex; align-items: center; gap: 50px; justify-content: center;
+            flex-wrap: wrap; padding: 30px;
+            background: var(--gray); border-radius: 30px; max-width: 900px; margin: 0 auto;
+        }
+        .weather-icon { font-size: 70px; }
+        .weather-temp {
+            font-size: 72px; font-weight: 100; line-height: 1;
+            color: var(--electric-cyan); text-shadow: 0 0 30px rgba(0,242,255,0.3);
+        }
+        .weather-details { font-size: 13px; line-height: 2; opacity: 0.7; }
+        .weather-advice {
+            max-width: 380px; font-size: 14px; line-height: 1.8;
+            border-left: 2px solid var(--text); padding-left: 25px;
+        }
+
+        /* 3D VIEWER */
+        #viewer3d {
+            width: 100%; aspect-ratio: 16/9; max-height: 650px;
+            border-radius: 30px; overflow: hidden; border: 1px solid var(--border);
+            background: #000; cursor: grab; position: relative;
+        }
+        #viewer3d:active { cursor: grabbing; }
+        #viewer3d canvas { display: block; }
+        .viewer-hint {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255,255,255,0.3); pointer-events: none; z-index: 5;
+        }
+        .viewer-nav {
+            display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap;
+        }
+        .viewer-dot {
+            width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--text);
+            cursor: pointer; transition: 0.3s; opacity: 0.4;
+        }
+        .viewer-dot.active { background: var(--text); opacity: 1; }
 
         /* FAQ */
         .faq-item { border-bottom: 1px solid var(--border); padding: 30px 0; cursor: pointer; }
@@ -230,7 +281,6 @@
         .faq-a { font-size: 13px; line-height: 1.8; opacity: 0; max-height: 0; overflow: hidden; transition: 0.4s; }
         .faq-item.active .faq-a { opacity: 0.5; max-height: 300px; padding-top: 20px; }
 
-        /* TOAST */
         #toast {
             position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
             background: var(--text); color: var(--bg); padding: 16px 36px;
@@ -240,11 +290,9 @@
         }
         #toast.show { bottom: 40px; }
 
-        /* SCROLL REVEAL */
         .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s, transform 0.8s; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        /* BUTTONS */
         .btn-lux {
             width: 100%; padding: 18px; background: var(--text); color: var(--bg);
             border: none; border-radius: 16px; font-size: 10px; font-weight: bold;
@@ -252,9 +300,7 @@
             transition: opacity 0.3s, transform 0.2s;
         }
         .btn-lux:hover { opacity: 0.8; transform: scale(0.98); }
-        body.thermal-active .btn-lux {
-            background: var(--electric-cyan); color: #000;
-        }
+        body.thermal-active .btn-lux { background: var(--electric-cyan); color: #000; }
 
         input[type="text"], input[type="email"] {
             width: 100%; padding: 16px; margin: 16px 0; border-radius: 12px;
@@ -262,37 +308,8 @@
             font-family: inherit; font-size: 13px; outline: none; transition: border 0.3s;
         }
         input:focus { border-color: var(--beige); }
+        .newsletter-box { max-width: 500px; margin: 60px auto 0; text-align: center; }
 
-        /* NEWSLETTER */
-        .newsletter-box {
-            max-width: 500px; margin: 60px auto 0; text-align: center;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            header { padding: 15px 4%; }
-            .logo-top { font-size: 14px; letter-spacing: 6px; }
-            .btn-mode { font-size: 7px; padding: 5px 10px; letter-spacing: 1px; }
-            .hero-title { font-size: clamp(40px, 12vw, 80px); letter-spacing: 15px; transform: translateX(8px); }
-            .hero-nav { gap: 12px; }
-            .hero-nav a { font-size: 8px; letter-spacing: 1px; }
-            section { padding: 60px 4%; }
-            .catalog { grid-template-columns: 1fr 1fr; gap: 15px; }
-            .builder-container { grid-template-columns: 1fr; }
-            .founders-grid { grid-template-columns: 1fr; gap: 30px; }
-            .lab-box { grid-template-columns: 1fr; gap: 30px; padding: 25px; border-radius: 30px; }
-            .mirror { aspect-ratio: 1/1; max-height: 400px; }
-            #side-cart, #auth-modal, #spec-modal { width: 100%; right: -100%; padding: 30px 20px; }
-            #club-section { border-radius: 30px; margin: 0 3%; }
-            .newsletter-box { margin-top: 40px; }
-        }
-        @media (max-width: 480px) {
-            .catalog { grid-template-columns: 1fr; }
-            .nav-top { gap: 4px; }
-            .btn-mode { padding: 4px 8px; font-size: 6px; }
-        }
-
-        /* PARTNER GRID */
         .partner-grid {
             display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center;
         }
@@ -310,10 +327,35 @@
             font-size: 18px; line-height: 1.8; font-weight: 300;
             border-left: 3px solid var(--text); padding-left: 35px;
         }
+
         @media (max-width: 768px) {
+            header { padding: 15px 4%; }
+            .logo-top { font-size: 14px; letter-spacing: 6px; }
+            .btn-mode { font-size: 7px; padding: 5px 10px; letter-spacing: 1px; }
+            .hero-title { font-size: clamp(40px, 12vw, 80px); letter-spacing: 15px; transform: translateX(8px); }
+            .hero-nav { gap: 12px; }
+            .hero-nav a { font-size: 8px; letter-spacing: 1px; }
+            section { padding: 60px 4%; }
+            .catalog { grid-template-columns: 1fr 1fr; gap: 15px; }
+            .builder-container { grid-template-columns: 1fr; }
+            .founders-grid { grid-template-columns: 1fr; gap: 30px; }
+            .lab-box { grid-template-columns: 1fr; gap: 30px; padding: 25px; border-radius: 30px; }
+            .mirror { aspect-ratio: 1/1; max-height: 400px; }
+            #side-cart, #auth-modal, #spec-modal { width: 100%; right: -100%; padding: 30px 20px; }
+            #club-section { border-radius: 30px; margin: 0 3%; }
+            .newsletter-box { margin-top: 40px; }
             .partner-grid { grid-template-columns: 1fr; gap: 30px; }
             .partner-img-box { max-height: 400px; }
             .partner-text { font-size: 15px; padding-left: 20px; }
+            .weather-dash { flex-direction: column; gap: 25px; text-align: center; }
+            .weather-advice { border-left: none; border-top: 2px solid var(--text); padding: 20px 0 0; max-width: 100%; }
+            .enzo-log { max-height: 200px; }
+            #viewer3d { aspect-ratio: 1/1; max-height: 400px; }
+        }
+        @media (max-width: 480px) {
+            .catalog { grid-template-columns: 1fr; }
+            .nav-top { gap: 4px; }
+            .btn-mode { padding: 4px 8px; font-size: 6px; }
         }
     </style>
 </head>
@@ -332,7 +374,6 @@
         </nav>
     </header>
 
-    <!-- SPECS MODAL -->
     <div id="spec-modal">
         <span class="close-trigger" onclick="toggleSpecs()">← BACK</span>
         <h2 style="font-size:18px; letter-spacing:4px; text-transform:uppercase; margin-bottom:30px;">Tech Specs</h2>
@@ -346,17 +387,14 @@
         </div>
     </div>
 
-    <!-- AUTH MODAL -->
     <div id="auth-modal">
         <span class="close-trigger" onclick="toggleAuth()">← BACK</span>
         <h2 style="font-size:18px; letter-spacing:4px; text-transform:uppercase; margin-bottom:30px;">Identity</h2>
         <input type="email" placeholder="EMAIL" id="login-field" autocomplete="email">
-        <input type="password" placeholder="PASSWORD" id="pass-field" style="display:none;">
         <button class="btn-lux" onclick="login()">Sync Identity</button>
         <p style="font-size:10px; opacity:0.3; text-align:center; margin-top:15px;">Club members only</p>
     </div>
 
-    <!-- CART -->
     <div id="side-cart">
         <span class="close-trigger" onclick="toggleCart()">← CLOSE</span>
         <h2 style="font-size:18px; letter-spacing:4px; text-transform:uppercase; margin-bottom:30px;">Bag</h2>
@@ -380,6 +418,7 @@
             <li><a href="#mainline">Essentials</a></li>
             <li><a href="#lab">ENZO</a></li>
             <li><a href="#builder">Builder</a></li>
+            <li><a href="#3d">3D View</a></li>
             <li><a href="#club-section">Club</a></li>
             <li><a href="#origins">Origins</a></li>
             <li><a href="#maxxmoto">MaxxMoto</a></li>
@@ -394,10 +433,7 @@
                 <div class="img-wrap"><img src="jacket.jpeg" class="gear-img" alt="Aero Jacket" loading="lazy"></div>
                 <div class="price-tag">145 000 ₽</div>
                 <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button>
-                    <button class="size-btn" onclick="selectSize(this)">M</button>
-                    <button class="size-btn" onclick="selectSize(this)">L</button>
-                    <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
                 </div>
                 <button class="btn-lux" onclick="buy('Aero Jacket', 145000)">Add to bag</button>
             </div>
@@ -405,10 +441,7 @@
                 <div class="img-wrap"><img src="glovo.jpeg" class="gear-img" alt="Glovo Gloves" loading="lazy"></div>
                 <div class="price-tag">32 000 ₽</div>
                 <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button>
-                    <button class="size-btn" onclick="selectSize(this)">M</button>
-                    <button class="size-btn" onclick="selectSize(this)">L</button>
-                    <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
                 </div>
                 <button class="btn-lux" onclick="buy('Glovo Gloves', 32000)">Add to bag</button>
             </div>
@@ -416,10 +449,7 @@
                 <div class="img-wrap"><img src="moto1.jpeg" class="gear-img" alt="Armor v1" loading="lazy"></div>
                 <div class="price-tag">180 000 ₽</div>
                 <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button>
-                    <button class="size-btn" onclick="selectSize(this)">M</button>
-                    <button class="size-btn" onclick="selectSize(this)">L</button>
-                    <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
                 </div>
                 <button class="btn-lux" onclick="buy('Armor v1', 180000)">Add to bag</button>
             </div>
@@ -427,10 +457,7 @@
                 <div class="img-wrap"><img src="moto2.jpeg" class="gear-img" alt="Armor v2" loading="lazy"></div>
                 <div class="price-tag">195 000 ₽</div>
                 <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button>
-                    <button class="size-btn" onclick="selectSize(this)">M</button>
-                    <button class="size-btn" onclick="selectSize(this)">L</button>
-                    <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
                 </div>
                 <button class="btn-lux" onclick="buy('Armor v2', 195000)">Add to bag</button>
             </div>
@@ -445,10 +472,7 @@
                 <div class="img-wrap"><img src="shirt.jpeg" class="gear-img" alt="Studio Shirt" loading="lazy"></div>
                 <div class="price-tag">45 000 ₽</div>
                 <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button>
-                    <button class="size-btn" onclick="selectSize(this)">M</button>
-                    <button class="size-btn" onclick="selectSize(this)">L</button>
-                    <button class="size-btn" onclick="selectSize(this)">XL</button>
+                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
                 </div>
                 <button class="btn-lux" onclick="buy('Studio Shirt', 45000)">Add to bag</button>
             </div>
@@ -461,35 +485,35 @@
                 <div class="img-wrap"><img src="tufli.jpeg" class="gear-img" alt="Studio Shoes" loading="lazy"></div>
                 <div class="price-tag">85 000 ₽</div>
                 <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">39</button>
-                    <button class="size-btn" onclick="selectSize(this)">40</button>
-                    <button class="size-btn" onclick="selectSize(this)">41</button>
-                    <button class="size-btn" onclick="selectSize(this)">42</button>
-                    <button class="size-btn" onclick="selectSize(this)">43</button>
+                    <button class="size-btn" onclick="selectSize(this)">39</button><button class="size-btn" onclick="selectSize(this)">40</button><button class="size-btn" onclick="selectSize(this)">41</button><button class="size-btn" onclick="selectSize(this)">42</button><button class="size-btn" onclick="selectSize(this)">43</button>
                 </div>
                 <button class="btn-lux" onclick="buy('Studio Shoes', 85000)">Add to bag</button>
             </div>
         </div>
     </section>
 
-    <!-- 4. ENZO SCANNER -->
+    <!-- 4. ENZO LAB 2.0 -->
     <section id="lab" class="reveal">
-        <span class="section-label">ENZO Neural Lab</span>
+        <span class="section-label">ENZO Neural Lab v2.0</span>
         <div class="lab-box">
             <div class="mirror">
                 <div class="scan-line"></div>
                 <div id="ai-loader"></div>
                 <img src="robot.jpg" id="v-port" alt="ENZO Scanner">
             </div>
-            <div>
-                <p id="enzo-text" style="font-size:15px; line-height:2; border-left:2px solid var(--text); padding-left:25px; margin-bottom:25px;">
-                    <b>ENZO:</b> Оптические системы активны. Загрузите прототип.
-                </p>
-                <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-                    <button class="btn-lux" style="margin:0; padding:10px 16px;" onclick="changeLight('day')">☀ Daylight</button>
-                    <button class="btn-lux" style="margin:0; padding:10px 16px;" onclick="changeLight('night')">🌙 Night Scan</button>
+            <div class="enzo-panel">
+                <div class="enzo-log" id="enzo-log">
+                    <div class="line"><span class="ts">[ENZO]</span> Оптические системы активны.</div>
+                    <div class="line"><span class="ts">[ENZO]</span> Ожидаю данных погоды...</div>
                 </div>
-                <button class="btn-lux" style="background:none; border:1px dashed var(--text); color:var(--text);" onclick="loadMax()">Load Photo</button>
+                <div class="enzo-actions">
+                    <button class="btn-enzo" onclick="loadMax()">📷 Загрузить</button>
+                    <button class="btn-enzo" onclick="changeLight('day')">☀ День</button>
+                    <button class="btn-enzo" onclick="changeLight('night')">🌙 Ночь</button>
+                    <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">🧠 Deep AI</button>
+                </div>
+                <input type="text" id="hf-token" placeholder="HuggingFace API token (опционально)" style="margin:8px 0 0; padding:10px 14px; font-size:10px; border-radius:8px; font-family:monospace;">
+                <p style="font-size:10px; opacity:0.3; margin-top:4px;">ENZO v3.2 — Open-Meteo + HuggingFace AI</p>
             </div>
         </div>
     </section>
@@ -513,7 +537,21 @@
         </div>
     </section>
 
-    <!-- 6. THE CLUB -->
+    <!-- 6. 3D VIEWER -->
+    <section id="3d" class="reveal">
+        <span class="section-label">3D Product Viewer</span>
+        <div style="position:relative; max-width:1100px; margin:0 auto;">
+            <div id="viewer3d"><div class="viewer-hint">DRAG TO ROTATE · SCROLL TO ZOOM</div></div>
+            <div class="viewer-nav" id="viewer-dots">
+                <div class="viewer-dot active" onclick="switchModel(0)"></div>
+                <div class="viewer-dot" onclick="switchModel(1)"></div>
+                <div class="viewer-dot" onclick="switchModel(2)"></div>
+                <div class="viewer-dot" onclick="switchModel(3)"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. THE CLUB -->
     <section id="club-section" class="reveal">
         <span class="section-label">Palermo [PRIVATE] Club</span>
         <div class="lock-overlay" id="club-lock">
@@ -528,7 +566,7 @@
         </div>
     </section>
 
-    <!-- 7. ORIGINS -->
+    <!-- 8. ORIGINS -->
     <section id="origins" class="reveal">
         <span class="section-label">Palermo Origins</span>
         <div class="founders-grid">
@@ -550,7 +588,7 @@
         </div>
     </section>
 
-    <!-- 8. MAXXMOTO -->
+    <!-- 9. MAXXMOTO -->
     <section id="maxxmoto" class="reveal">
         <span class="section-label">The Partnership: MaxxMoto</span>
         <div class="partner-grid">
@@ -561,16 +599,21 @@
         </div>
     </section>
 
-    <!-- 9. WEATHER & MAP -->
+    <!-- 10. WEATHER DASHBOARD -->
     <section id="comfort" class="reveal">
-        <span class="section-label">Operational Zone</span>
-        <div style="display:flex; align-items:center; gap:50px; justify-content:center; flex-wrap:wrap;">
-            <div style="font-size:80px; font-weight:100; color:var(--electric-cyan); text-shadow:0 0 30px rgba(0,242,255,0.3);">−2°C</div>
-            <p style="max-width:500px; font-size:15px; line-height:1.8; border-left:2px solid var(--text); padding-left:25px;">
-                <b>ENZO:</b> В Йошкар-Оле мороз. Система активировала Electric Cyan режим.
-            </p>
+        <span class="section-label">ENZO Climate Monitor</span>
+        <div class="weather-dash" id="weather-dash">
+            <div class="weather-icon" id="w-icon">⏳</div>
+            <div>
+                <div class="weather-temp" id="w-temp">--°</div>
+                <div class="weather-details" id="w-details">Загрузка данных Open-Meteo...</div>
+            </div>
+            <div class="weather-advice" id="w-advice">
+                <b>ENZO:</b> Подключаюсь к метеосенсорам Йошкар-Олы...
+            </div>
         </div>
     </section>
+
     <section id="stores" class="reveal">
         <span class="section-label">Headquarters</span>
         <div style="aspect-ratio:16/9; max-height:600px; border-radius:30px; overflow:hidden; border:1px solid var(--border);">
@@ -578,7 +621,7 @@
         </div>
     </section>
 
-    <!-- 10. FAQ -->
+    <!-- 11. FAQ -->
     <section id="faq" class="reveal">
         <span class="section-label">F.A.Q.</span>
         <div style="max-width:900px; margin:0 auto;">
@@ -592,14 +635,13 @@
             </div>
             <div class="faq-item" onclick="this.classList.toggle('active')">
                 <div class="faq-q">Что такое ENZO Lab?<span>+</span></div>
-                <div class="faq-a">ENZO — проприетарный ИИ-ассистент Palermo для калибровки силуэта, подбора материалов и анализа аэродинамики в реальном времени.</div>
+                <div class="faq-a">ENZO — проприетарный ИИ-ассистент Palermo для калибровки силуэта, подбора материалов и анализа аэродинамики в реальном времени. v2.0 использует HuggingFace AI + Open-Meteo для погодно-зависимых рекомендаций.</div>
             </div>
             <div class="faq-item" onclick="this.classList.toggle('active')">
                 <div class="faq-q">Обмен и возврат<span>+</span></div>
                 <div class="faq-a">Возврат в течение 30 дней с момента получения. Обмен размера — бесплатно через любой хаб MaxxMoto.</div>
             </div>
         </div>
-        <!-- NEWSLETTER -->
         <div class="newsletter-box reveal">
             <p style="font-size:11px; letter-spacing:3px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Subscribe to ENZO feed</p>
             <div style="display:flex; gap:10px;">
@@ -615,49 +657,178 @@
 
     <div id="toast">Ready</div>
 
-    <script>
-        let cart = [];
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        function buy(n, p) {
-            cart.push({ n, p });
-            updateCart();
-            toast(n + " — added");
-        }
+        // ── 3D VIEWER ──
+        const container = document.getElementById('viewer3d');
+        const scene = new THREE.Scene();
 
-        function toggleCart() {
-            document.getElementById('side-cart').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 0.5, 6);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.6;
+        controls.minDistance = 3;
+        controls.maxDistance = 10;
+        controls.maxPolarAngle = Math.PI * 0.7;
+
+        // Lights
+        scene.add(new THREE.AmbientLight(0x222244, 0.5));
+        const key = new THREE.DirectionalLight(0xffffff, 2);
+        key.position.set(5, 5, 5);
+        scene.add(key);
+        const rim = new THREE.DirectionalLight(0x00f2ff, 1.5);
+        rim.position.set(-3, 1, -3);
+        scene.add(rim);
+
+        // Particles
+        const particlesGeo = new THREE.BufferGeometry();
+        const count = 300;
+        const pos = new Float32Array(count * 3);
+        for (let i = 0; i < count * 3; i += 3) {
+            pos[i] = (Math.random() - 0.5) * 8;
+            pos[i + 1] = (Math.random() - 0.5) * 8;
+            pos[i + 2] = (Math.random() - 0.5) * 4;
         }
-        function toggleAuth() {
-            document.getElementById('auth-modal').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-        function toggleSpecs() {
-            document.getElementById('spec-modal').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-        function toggleNight() { document.body.classList.toggle('night-mode'); }
-        function closeAll() {
-            ['side-cart', 'auth-modal', 'spec-modal'].forEach(id => {
-                document.getElementById(id).classList.remove('open');
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const particlesMat = new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.02, transparent: true, opacity: 0.5 });
+        const particles = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particles);
+
+        // Main group
+        const mainGroup = new THREE.Group();
+        scene.add(mainGroup);
+
+        // Central torus knot
+        const knotGeo = new THREE.TorusKnotGeometry(0.7, 0.18, 128, 32);
+        const knotMat = new THREE.MeshPhysicalMaterial({
+            color: 0x111122, metalness: 0.9, roughness: 0.15,
+            clearcoat: 0.3, clearcoatRoughness: 0.2,
+        });
+        const knot = new THREE.Mesh(knotGeo, knotMat);
+        mainGroup.add(knot);
+
+        // Wireframe overlay
+        const wireGeo = new THREE.TorusKnotGeometry(0.72, 0.2, 64, 16);
+        const wireMat = new THREE.MeshBasicMaterial({ color: 0x00f2ff, wireframe: true, transparent: true, opacity: 0.15 });
+        const wire = new THREE.Mesh(wireGeo, wireMat);
+        mainGroup.add(wire);
+
+        // Ring
+        const ringGeo = new THREE.TorusGeometry(1.05, 0.03, 32, 100);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0x00f2ff, metalness: 0.5, roughness: 0.3, emissive: 0x002233, emissiveIntensity: 0.5 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        mainGroup.add(ring);
+
+        // Product cards (floating rectangles)
+        const textures = ['jacket.jpeg', 'moto1.jpeg', 'glovo.jpeg', 'tufli.jpeg'];
+        const cards = [];
+        const loader = new THREE.TextureLoader();
+
+        textures.forEach((src, i) => {
+            const angle = (i / textures.length) * Math.PI * 2;
+            const geo = new THREE.PlaneGeometry(0.45, 0.6);
+            const tex = loader.load(src);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            const mat = new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide, roughness: 0.4, metalness: 0.1 });
+            const card = new THREE.Mesh(geo, mat);
+            card.position.set(Math.cos(angle) * 1.5, 0, Math.sin(angle) * 1.5);
+            card.lookAt(0, 0, 0);
+            card.userData = { angle, radius: 1.5, y: 0 };
+            mainGroup.add(card);
+            cards.push(card);
+        });
+
+        let currentModel = 0;
+        window.switchModel = (idx) => {
+            currentModel = idx;
+            document.querySelectorAll('.viewer-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+            cards.forEach((card, i) => {
+                const targetY = i === idx ? 0.6 : 0;
+                card.userData.y = targetY;
             });
-            document.getElementById('overlay').classList.remove('active');
-        }
+            const target = cards[idx];
+            if (target) {
+                const wp = new THREE.Vector3();
+                target.getWorldPosition(wp);
+                controls.target.lerp(wp, 0.5);
+            }
+        };
 
-        function login() {
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            const t = performance.now() * 0.001;
+            particles.rotation.y += 0.0003;
+
+            cards.forEach(card => {
+                card.userData.angle += 0.003;
+                const a = card.userData.angle;
+                const r = card.userData.radius;
+                card.position.x = Math.cos(a) * r;
+                card.position.z = Math.sin(a) * r;
+                card.position.y += (card.userData.y - card.position.y) * 0.05;
+                card.lookAt(0, card.position.y, 0);
+                card.rotation.z += 0.01;
+            });
+
+            knot.rotation.y += 0.005;
+            wire.rotation.y += 0.005;
+            ring.rotation.z += 0.002;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // ── EXPOSE TO GLOBAL ──
+        window._3dScene = scene;
+        window._3dCards = cards;
+    </script>
+
+    <script>
+        // ── CART ──
+        let cart = [];
+        window.buy = (n, p) => { cart.push({ n, p }); updateCart(); toast(n + " — added"); };
+        window.toggleCart = () => { document.getElementById('side-cart').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
+        window.toggleAuth = () => { document.getElementById('auth-modal').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
+        window.toggleSpecs = () => { document.getElementById('spec-modal').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
+        window.toggleNight = () => { document.body.classList.toggle('night-mode'); };
+        window.closeAll = () => {
+            ['side-cart', 'auth-modal', 'spec-modal'].forEach(id => document.getElementById(id).classList.remove('open'));
+            document.getElementById('overlay').classList.remove('active');
+        };
+        window.login = () => {
             const email = document.getElementById('login-field').value.trim();
             if (!email) { toast("Enter email"); return; }
             const name = email.includes('stepan') ? 'Evsin Stepan' : email.split('@')[0];
             document.getElementById('id-label').innerText = name;
             document.getElementById('club-lock').classList.add('unlocked');
             const inner = document.getElementById('club-inner');
-            inner.style.opacity = '1';
-            inner.style.filter = 'blur(0)';
+            inner.style.opacity = '1'; inner.style.filter = 'blur(0)';
             toast("Welcome, " + name);
             toggleAuth();
-        }
-
-        function updateCart() {
+        };
+        window.updateCart = () => {
             const total = cart.reduce((s, i) => s + i.p, 0);
             document.getElementById('cart-q').innerText = cart.length;
             document.getElementById('cart-total').innerText = total.toLocaleString() + ' ₽';
@@ -667,110 +838,184 @@
             } else {
                 list.innerHTML = cart.map((i, idx) =>
                     `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px; padding:10px; border:1px solid var(--border); border-radius:10px;">
-                        <span>${i.n}</span>
-                        <span style="display:flex; align-items:center; gap:10px;">
-                            ${i.p.toLocaleString()} ₽
-                            <span style="cursor:pointer; opacity:0.3; font-size:14px;" onclick="removeItem(${idx})">&times;</span>
-                        </span>
+                        <span>${i.n}</span><span style="display:flex; align-items:center; gap:10px;">${i.p.toLocaleString()} ₽ <span style="cursor:pointer; opacity:0.3; font-size:14px;" onclick="removeItem(${idx})">&times;</span></span>
                     </div>`
                 ).join('');
             }
-        }
-
-        function removeItem(idx) {
-            cart.splice(idx, 1);
-            updateCart();
-            toast("Removed");
-        }
-
-        function checkout() {
+        };
+        window.removeItem = (idx) => { cart.splice(idx, 1); updateCart(); toast("Removed"); };
+        window.checkout = () => {
             if (cart.length === 0) { toast("Bag is empty"); return; }
             toast("Order placed. Confirmation sent.");
-            cart = [];
-            updateCart();
-            toggleCart();
-        }
-
-        function toast(m) {
+            cart = []; updateCart(); toggleCart();
+        };
+        window.toast = (m) => {
             const t = document.getElementById('toast');
-            t.innerText = m;
-            t.classList.add('show');
+            t.innerText = m; t.classList.add('show');
             clearTimeout(t._timeout);
             t._timeout = setTimeout(() => t.classList.remove('show'), 2500);
-        }
+        };
+        window.toggleThermal = () => { document.body.classList.toggle('thermal-active'); document.body.classList.remove('night-mode'); };
+        window.selectSize = (el) => { el.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); };
+        window.subscribe = () => { toast("Subscribed to ENZO feed"); };
 
-        function toggleThermal() {
-            document.body.classList.toggle('thermal-active');
-            document.body.classList.remove('night-mode');
-        }
-
-        function selectSize(el) {
-            el.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function subscribe() {
-            toast("Subscribed to ENZO feed");
-        }
-
-        // ENZO Lab
+        // ── ENZO LAB 2.0 ──
         let isMax = false;
-        function loadMax() {
+        window.enzoLog = (msg) => {
+            const log = document.getElementById('enzo-log');
+            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            log.innerHTML += `<div class="line"><span class="ts">[${time}]</span> ${msg}</div>`;
+            log.scrollTop = log.scrollHeight;
+        };
+        window.loadMax = () => {
             document.getElementById('v-port').src = 'max1.jpeg';
             isMax = true;
-            document.getElementById('enzo-text').innerHTML = '<b>ENZO:</b> Прототип загружен. Анализирую структуру...';
+            enzoLog('Прототип загружен. Анализирую структуру ткани...');
             toast("Photo Loaded");
-        }
-        function changeLight(mode) {
+        };
+        window.changeLight = (mode) => {
             if (!isMax) { toast("Сначала загрузите фото"); return; }
             const l = document.getElementById('ai-loader');
             const img = document.getElementById('v-port');
-            const txt = document.getElementById('enzo-text');
-            l.style.display = 'block';
-            img.style.opacity = '0.2';
-            txt.innerHTML = '<b>ENZO:</b> Сканирую в ' + (mode === 'night' ? 'ночном' : 'дневном') + ' режиме...';
+            l.style.display = 'block'; img.style.opacity = '0.2';
+            enzoLog(`Сканирование в ${mode === 'night' ? 'ночном' : 'дневном'} спектре...`);
             setTimeout(() => {
                 img.src = (mode === 'night') ? 'max2.jpeg' : 'max1.jpeg';
-                img.style.opacity = '0.9';
-                l.style.display = 'none';
-                txt.innerHTML = '<b>ENZO:</b> Сканирование завершено. ' + (mode === 'night' ? 'Ночной' : 'Дневной') + ' режим активен.';
+                img.style.opacity = '0.9'; l.style.display = 'none';
+                enzoLog(`Сканирование завершено. ${mode === 'night' ? 'Ночной' : 'Дневной'} режим.`);
             }, 2500);
-        }
+        };
 
-        // Look Builder
-        let sItems = [];
-        function sel(name, el) {
-            el.classList.toggle('selected');
-            if (sItems.includes(name)) {
-                sItems = sItems.filter(i => i !== name);
-            } else {
-                sItems.push(name);
+        // ── ENZO DEEP AI (HuggingFace) ──
+        window.enzoDeepAnalysis = async () => {
+            enzoLog('🧠 Запуск Deep AI анализа...');
+            const HF_TOKEN = document.getElementById('hf-token')?.value?.trim();
+
+            // Gather context
+            const weatherEl = document.getElementById('w-temp');
+            const tempText = weatherEl ? weatherEl.innerText : 'неизвестно';
+            const cartItems = cart.map(i => i.n).join(', ') || 'ничего не выбрано';
+
+            const prompt = `<s>[INST] Ты — ENZO, ИИ-стилист бренда Palermo Studio из Йошкар-Олы.
+Температура сейчас: ${tempText}.
+В корзине пользователя: ${cartItems}.
+Дай короткий (2-3 предложения) стильный совет по экипировке для мотоциклиста на эту погоду.
+Говори на русском, уверенно, как фэшн-эксперт. Добавь отсылку к electric cyan и аэродинамике.
+Без маркдауна, просто текст. [/INST]`;
+
+            try {
+                enzoLog('Запрос к HuggingFace API...');
+                const resp = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${HF_TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 150, temperature: 0.8 } })
+                });
+                const data = await resp.json();
+                let text = '';
+                if (Array.isArray(data)) {
+                    text = data[0]?.generated_text || '';
+                } else if (data.generated_text) {
+                    text = data.generated_text;
+                } else if (data.error) {
+                    throw new Error(data.error);
+                }
+                // Strip prompt from response
+                const idx = text.lastIndexOf('[/INST]');
+                if (idx !== -1) text = text.slice(idx + 7).trim();
+                enzoLog('✅ ENZO AI: ' + text);
+            } catch (e) {
+                enzoLog('⚠️ AI недоступен. Использую локальный анализ.');
+                // Fallback local analysis
+                const temp = parseInt(tempText);
+                const advice = !isNaN(temp)
+                    ? (temp < 0 ? 'Мороз — время Aero Jacket. Electric Cyan подчеркнёт силуэт на скорости.' :
+                       temp < 10 ? 'Прохладно — Armor v1 + Glovo Gloves. Слои решают всё.' :
+                       temp < 20 ? 'Комфорт — Studio Shirt и Leather Bag. Аэродинамика на максимум.' :
+                       'Тепло — облегчённый комплект. Дышащие ткани и свобода движения.')
+                    : 'Погода нестабильна — рекомендую Armor v2 как универсальное решение.';
+                enzoLog('✅ ENZO (local): ' + advice);
             }
+        };
+
+        // ── LOOK BUILDER ──
+        let sItems = [];
+        window.sel = (name, el) => {
+            el.classList.toggle('selected');
+            if (sItems.includes(name)) { sItems = sItems.filter(i => i !== name); }
+            else { sItems.push(name); }
             const msg = document.getElementById('l-msg');
             const total = document.getElementById('l-total');
             if (sItems.length > 0) {
                 msg.innerHTML = '<b>ENZO:</b> Анализ сочетания...';
-                msg.style.opacity = '1';
-                total.style.display = 'block';
+                msg.style.opacity = '1'; total.style.display = 'block';
                 const prices = sItems.map(i => parseInt(i.match(/\d+/g).pop()));
-                const sum = prices.reduce((a, b) => a + b, 0);
-                total.innerText = '≈ ' + sum.toLocaleString() + ' ₽';
+                total.innerText = '≈ ' + prices.reduce((a, b) => a + b, 0).toLocaleString() + ' ₽';
             } else {
                 msg.innerHTML = 'Выберите элементы...';
-                msg.style.opacity = '0.5';
-                total.style.display = 'none';
+                msg.style.opacity = '0.5'; total.style.display = 'none';
+            }
+        };
+
+        // ── WEATHER API (Open-Meteo) ──
+        async function fetchWeather() {
+            try {
+                const resp = await fetch('https://api.open-meteo.com/v1/forecast?latitude=56.63&longitude=47.89&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Europe/Moscow');
+                const data = await resp.json();
+                const cur = data.current;
+                const temp = Math.round(cur.temperature_2m);
+                const humidity = cur.relative_humidity_2m;
+                const wind = Math.round(cur.wind_speed_10m);
+                const code = cur.weather_code;
+
+                const icons = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌦️', 55: '🌦️', 61: '🌧️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '⛈️', 95: '⛈️', 96: '⛈️', 99: '⛈️' };
+                const labels = { 0: 'Ясно', 1: 'Малооблачно', 2: 'Переменная облачность', 3: 'Пасмурно', 45: 'Туман', 48: 'Иней', 51: 'Морось', 61: 'Дождь', 71: 'Снег', 80: 'Ливень', 95: 'Гроза' };
+                const icon = icons[code] || '🌡️';
+                const label = labels[code] || 'Неопределённо';
+
+                document.getElementById('w-icon').innerText = icon;
+                document.getElementById('w-temp').innerHTML = `${temp > 0 ? '+' : ''}${temp}°C`;
+                document.getElementById('w-details').innerHTML = `${label} &middot; Влажность ${humidity}% &middot; Ветер ${wind} м/с`;
+
+                let advice = '';
+                if (temp <= -10) advice = 'Экстремальный холод. Aero Jacket + утеплённый Armor v2. Никаких компромиссов.';
+                else if (temp <= 0) advice = 'Морозно. Electric Cyan режим оправдан. Рекомендую Aero Jacket и Glovo Gloves.';
+                else if (temp <= 10) advice = 'Прохладно. Идеально для Armor v1. Слои и аэродинамика.';
+                else if (temp <= 20) advice = 'Комфортная погода. Studio Shirt + Leather Bag — стиль и свобода.';
+                else if (temp <= 30) advice = 'Тепло. Облегчённый силуэт. Дышащие ткани Essential линии.';
+                else advice = 'Жарко. Минимум слоёв. Сетчатые вставки Armor серии.';
+                if (code >= 51 && code <= 67) advice += ' Обнаружены осадки — водонепроницаемая обработка активна.';
+                if (wind >= 10) advice += ' Ветер — аэродинамика критична.';
+                document.getElementById('w-advice').innerHTML = `<b>ENZO:</b> ${advice}`;
+
+                // Push to ENZO log
+                enzoLog(`Погода обновлена: ${temp}°C, ${label.toLowerCase()}, ветер ${wind} м/с.`);
+                enzoLog(`Рекомендация: ${advice}`);
+                document.getElementById('enzo-log').querySelector('.line:last-child')?.remove(); // dedupe
+
+                // Auto-activate thermal if cold
+                if (temp <= 0 && !document.body.classList.contains('thermal-active')) {
+                    enzoLog('Автоактивация Thermal режима (t < 0°C).');
+                }
+            } catch (e) {
+                document.getElementById('w-details').innerText = 'Open-Meteo недоступен. Использую кэш.';
             }
         }
 
-        // Scroll reveal
+        // Initial ENZO greeting
+        setTimeout(() => {
+            enzoLog('ENZO Core v3.2 инициализирован.');
+            enzoLog('Сенсоры: HuggingFace AI + Open-Meteo.');
+        }, 300);
+
+        fetchWeather();
+
+        // ── SCROLL REVEAL ──
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // ESC to close
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
-
         window.onload = () => { window.scrollTo(0, 0); };
     </script>
 </body>
