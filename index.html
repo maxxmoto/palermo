@@ -513,7 +513,7 @@
                     <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">🧠 Deep AI</button>
                 </div>
                 <input type="text" id="hf-token" placeholder="HuggingFace API token (опционально)" style="margin:8px 0 0; padding:10px 14px; font-size:10px; border-radius:8px; font-family:monospace;">
-                <p style="font-size:10px; opacity:0.3; margin-top:4px;">ENZO v3.2 — Open-Meteo + HuggingFace AI</p>
+                <p style="font-size:10px; opacity:0.3; margin-top:4px;">ENZO v3.2 — WeatherAPI.com + HuggingFace AI</p>
             </div>
         </div>
     </section>
@@ -616,8 +616,11 @@
 
     <section id="stores" class="reveal">
         <span class="section-label">Headquarters</span>
-        <div style="aspect-ratio:16/9; max-height:600px; border-radius:30px; overflow:hidden; border:1px solid var(--border);">
-            <img src="map.jpg" alt="Map" style="width:100%; height:100%; object-fit:contain;" loading="lazy">
+        <div style="max-width:1100px; margin:0 auto;">
+            <div id="geo-map" style="width:100%; aspect-ratio:16/9; max-height:550px; border-radius:30px; overflow:hidden; border:1px solid var(--border); position:relative;">
+                <div id="geo-map-inner" style="width:100%; height:100%; background:var(--gray); display:flex; align-items:center; justify-content:center; font-size:12px; opacity:0.4;">Загрузка карты Geoapify...</div>
+            </div>
+            <p style="text-align:center; font-size:10px; letter-spacing:2px; opacity:0.3; margin-top:12px;">Yoshkar-Ola &middot; 56.63° N, 47.89° E &middot; powered by Geoapify</p>
         </div>
     </section>
 
@@ -812,7 +815,7 @@
         window.toggleCart = () => { document.getElementById('side-cart').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
         window.toggleAuth = () => { document.getElementById('auth-modal').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
         window.toggleSpecs = () => { document.getElementById('spec-modal').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-        window.toggleNight = () => { document.body.classList.toggle('night-mode'); };
+        window.toggleNight = () => { document.body.classList.toggle('night-mode'); loadGeoMap(); };
         window.closeAll = () => {
             ['side-cart', 'auth-modal', 'spec-modal'].forEach(id => document.getElementById(id).classList.remove('open'));
             document.getElementById('overlay').classList.remove('active');
@@ -855,7 +858,7 @@
             clearTimeout(t._timeout);
             t._timeout = setTimeout(() => t.classList.remove('show'), 2500);
         };
-        window.toggleThermal = () => { document.body.classList.toggle('thermal-active'); document.body.classList.remove('night-mode'); };
+        window.toggleThermal = () => { document.body.classList.toggle('thermal-active'); document.body.classList.remove('night-mode'); loadGeoMap(); };
         window.selectSize = (el) => { el.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); };
         window.subscribe = () => { toast("Subscribed to ENZO feed"); };
 
@@ -956,25 +959,26 @@
             }
         };
 
-        // ── WEATHER API (Open-Meteo) ──
+        // ── WEATHER API (WeatherAPI.com) ──
         async function fetchWeather() {
+            const WAPI_KEY = '0426384116734bb4a94183926263007';
             try {
-                const resp = await fetch('https://api.open-meteo.com/v1/forecast?latitude=56.63&longitude=47.89&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Europe/Moscow');
+                const resp = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WAPI_KEY}&q=Yoshkar-Ola&lang=ru&aqi=no`);
                 const data = await resp.json();
-                const cur = data.current;
-                const temp = Math.round(cur.temperature_2m);
-                const humidity = cur.relative_humidity_2m;
-                const wind = Math.round(cur.wind_speed_10m);
-                const code = cur.weather_code;
+                if (data.error) throw new Error(data.error.message);
+                const c = data.current;
+                const temp = Math.round(c.temp_c);
+                const feels = Math.round(c.feelslike_c);
+                const humidity = c.humidity;
+                const wind = Math.round(c.wind_kph / 3.6);
+                const label = c.condition.text;
+                const icon = 'https:' + c.condition.icon;
+                const uv = c.uv;
+                const isDay = c.is_day;
 
-                const icons = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌦️', 55: '🌦️', 61: '🌧️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '⛈️', 95: '⛈️', 96: '⛈️', 99: '⛈️' };
-                const labels = { 0: 'Ясно', 1: 'Малооблачно', 2: 'Переменная облачность', 3: 'Пасмурно', 45: 'Туман', 48: 'Иней', 51: 'Морось', 61: 'Дождь', 71: 'Снег', 80: 'Ливень', 95: 'Гроза' };
-                const icon = icons[code] || '🌡️';
-                const label = labels[code] || 'Неопределённо';
-
-                document.getElementById('w-icon').innerText = icon;
+                document.getElementById('w-icon').innerHTML = `<img src="${icon}" alt="${label}" style="width:70px; height:70px;">`;
                 document.getElementById('w-temp').innerHTML = `${temp > 0 ? '+' : ''}${temp}°C`;
-                document.getElementById('w-details').innerHTML = `${label} &middot; Влажность ${humidity}% &middot; Ветер ${wind} м/с`;
+                document.getElementById('w-details').innerHTML = `${label} &middot; Ощущается ${feels > 0 ? '+' : ''}${feels}°C &middot; Влажность ${humidity}% &middot; Ветер ${wind} м/с &middot; UV ${uv}`;
 
                 let advice = '';
                 if (temp <= -10) advice = 'Экстремальный холод. Aero Jacket + утеплённый Armor v2. Никаких компромиссов.';
@@ -983,31 +987,39 @@
                 else if (temp <= 20) advice = 'Комфортная погода. Studio Shirt + Leather Bag — стиль и свобода.';
                 else if (temp <= 30) advice = 'Тепло. Облегчённый силуэт. Дышащие ткани Essential линии.';
                 else advice = 'Жарко. Минимум слоёв. Сетчатые вставки Armor серии.';
-                if (code >= 51 && code <= 67) advice += ' Обнаружены осадки — водонепроницаемая обработка активна.';
+                if (label.toLowerCase().includes('дожд') || label.toLowerCase().includes('ливень')) advice += ' Обнаружены осадки — водоотталкивающая пропитка активна.';
                 if (wind >= 10) advice += ' Ветер — аэродинамика критична.';
+                if (uv >= 6) advice += ' UV-индекс высокий — защита обязательна.';
                 document.getElementById('w-advice').innerHTML = `<b>ENZO:</b> ${advice}`;
 
-                // Push to ENZO log
-                enzoLog(`Погода обновлена: ${temp}°C, ${label.toLowerCase()}, ветер ${wind} м/с.`);
+                enzoLog(`Погода: ${label}, ${temp}°C (ощущается ${feels}°C), ветер ${wind} м/с.`);
                 enzoLog(`Рекомендация: ${advice}`);
-                document.getElementById('enzo-log').querySelector('.line:last-child')?.remove(); // dedupe
-
-                // Auto-activate thermal if cold
-                if (temp <= 0 && !document.body.classList.contains('thermal-active')) {
-                    enzoLog('Автоактивация Thermal режима (t < 0°C).');
-                }
+                if (temp <= 0) enzoLog('Температура < 0°C — Thermal режим рекомендован.');
             } catch (e) {
-                document.getElementById('w-details').innerText = 'Open-Meteo недоступен. Использую кэш.';
+                document.getElementById('w-details').innerText = 'WeatherAPI недоступен.';
+                document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> Сенсоры временно отключены. Использую последние данные.';
             }
+        }
+
+        // ── GEOAPIFY MAP ──
+        function loadGeoMap() {
+            const GEO_KEY = 'acd79c1eab9249aebd6287e34e67f703';
+            const lon = 47.89, lat = 56.63;
+            const container = document.getElementById('geo-map-inner');
+            const isNight = document.body.classList.contains('night-mode') || document.body.classList.contains('thermal-active');
+            const style = isNight ? 'dark-matter' : 'osm-bright-smooth';
+            const mapUrl = `https://maps.geoapify.com/v1/staticmap?style=${style}&width=1100&height=550&center=lonlat:${lon},${lat}&zoom=14&marker=lonlat:${lon},${lat};color:%23D2B48C;size:large;text:PALERMO+HQ&apiKey=${GEO_KEY}`;
+            container.innerHTML = `<img src="${mapUrl}" alt="Palermo HQ Map" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<p style=opacity:0.3>Map unavailable</p>'">`;
         }
 
         // Initial ENZO greeting
         setTimeout(() => {
             enzoLog('ENZO Core v3.2 инициализирован.');
-            enzoLog('Сенсоры: HuggingFace AI + Open-Meteo.');
+            enzoLog('Сенсоры: HuggingFace AI + WeatherAPI.com + Geoapify.');
         }, 300);
 
         fetchWeather();
+        loadGeoMap();
 
         // ── SCROLL REVEAL ──
         const observer = new IntersectionObserver((entries) => {
