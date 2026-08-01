@@ -1,3 +1,10 @@
+// ── SERVICE WORKER CLEANUP ──
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) { r.unregister(); });
+    });
+}
+
 // ── BURGER ──
 window.toggleBurger = function () {
     document.getElementById('burger').classList.toggle('active');
@@ -166,20 +173,42 @@ window.changeLight = function (mode) {
 };
 
 window.enzoDeepAnalysis = function () {
-    enzoLog('\ud83e\udde0 \u0417\u0430\u043f\u0443\u0441\u043a Deep AI...');
+    enzoLog('\u0417\u0430\u043f\u0443\u0441\u043a Deep AI \u0430\u043d\u0430\u043b\u0438\u0437\u0430...', 'processing');
     var weatherEl = document.getElementById('w-temp');
     var tempText = weatherEl ? weatherEl.innerText : '\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e';
     var cartItems = cart.map(function (i) { return i.n; }).join(', ') || '\u043d\u0438\u0447\u0435\u0433\u043e';
+
     var prompt = '<s>[INST] \u0422\u044b \u2014 ENZO, \u0418\u0418-\u0441\u0442\u0438\u043b\u0438\u0441\u0442 Palermo Studio (\u0419\u043e\u0448\u043a\u0430\u0440-\u041e\u043b\u0430). \u0422\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0430: ' + tempText + '. \u0412 \u043a\u043e\u0440\u0437\u0438\u043d\u0435: ' + cartItems + '. \u0414\u0430\u0439 \u043a\u043e\u0440\u043e\u0442\u043a\u0438\u0439 (2-3 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f) \u0441\u0442\u0438\u043b\u044c\u043d\u044b\u0439 \u0441\u043e\u0432\u0435\u0442 \u043f\u043e \u044d\u043a\u0438\u043f\u0438\u0440\u043e\u0432\u043a\u0435 \u0434\u043b\u044f \u043c\u043e\u0442\u043e\u0446\u0438\u043a\u043b\u0438\u0441\u0442\u0430. \u0420\u0443\u0441\u0441\u043a\u0438\u0439, \u0443\u0432\u0435\u0440\u0435\u043d\u043d\u043e, \u0431\u0435\u0437 \u043c\u0430\u0440\u043a\u0434\u0430\u0443\u043d\u0430. [/INST]';
 
-    enzoLog('\u26a0\ufe0f AI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d. \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0430\u043b\u0438\u0437:', 'processing');
-    var temp = parseInt(tempText);
-    var advice = !isNaN(temp)
-        ? (temp < 0 ? '\u041c\u043e\u0440\u043e\u0437 \u2014 Aero Jacket + Electric Cyan.' : temp < 10 ? '\u041f\u0440\u043e\u0445\u043b\u0430\u0434\u043d\u043e \u2014 Armor v1 + Glovo Gloves.' : temp < 20 ? '\u041a\u043e\u043c\u0444\u043e\u0440\u0442 \u2014 Studio Shirt + Leather Bag.' : '\u0422\u0435\u043f\u043b\u043e \u2014 \u043e\u0431\u043b\u0435\u0433\u0447\u0451\u043d\u043d\u044b\u0439 \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442.')
-        : 'Armor v2 \u2014 \u0443\u043d\u0438\u0432\u0435\u0440\u0441\u0430\u043b\u044c\u043d\u043e\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435.';
-    setTimeout(function () {
-        enzoLog(advice, 'done');
-    }, 1500);
+    var HF_TOKEN = localStorage.getItem('hf_token') || '';
+    if (HF_TOKEN) {
+        enzoLog('\u0417\u0430\u043f\u0440\u043e\u0441 \u043a HuggingFace API...', 'processing');
+        fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + HF_TOKEN, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 150, temperature: 0.8 } })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.error) throw new Error(typeof data.error === 'string' ? data.error : data.error.message || 'API error');
+            var text = Array.isArray(data) ? (data[0] && data[0].generated_text) || '' : data.generated_text || '';
+            var idx = text.lastIndexOf('[/INST]');
+            if (idx !== -1) text = text.slice(idx + 7).trim();
+            enzoLog(text, 'done');
+        })
+        .catch(function () { localFallback(); });
+    } else {
+        localFallback();
+    }
+
+    function localFallback() {
+        enzoLog('\u26a0\ufe0f \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0430\u043b\u0438\u0437:', 'processing');
+        var temp = parseInt(tempText);
+        var advice = !isNaN(temp)
+            ? (temp < 0 ? '\u041c\u043e\u0440\u043e\u0437 \u2014 Aero Jacket + Electric Cyan.' : temp < 10 ? '\u041f\u0440\u043e\u0445\u043b\u0430\u0434\u043d\u043e \u2014 Armor v1 + Glovo Gloves.' : temp < 20 ? '\u041a\u043e\u043c\u0444\u043e\u0440\u0442 \u2014 Studio Shirt + Leather Bag.' : '\u0422\u0435\u043f\u043b\u043e \u2014 \u043e\u0431\u043b\u0435\u0433\u0447\u0451\u043d\u043d\u044b\u0439 \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442.')
+            : 'Armor v2 \u2014 \u0443\u043d\u0438\u0432\u0435\u0440\u0441\u0430\u043b\u044c\u043d\u043e\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435.';
+        setTimeout(function () { enzoLog(advice, 'done'); }, 1200);
+    }
 };
 
 // ── LOOK BUILDER ──
@@ -317,8 +346,14 @@ window.toggleNight = function () {
 };
 
 // ── INIT ──
+var savedToken = localStorage.getItem('hf_token');
+if (savedToken) {
+    var tokInput = document.getElementById('hf-token-input');
+    if (tokInput) tokInput.value = savedToken;
+}
 setTimeout(function () {
     enzoLog('\u0421\u0435\u043d\u0441\u043e\u0440\u044b \u0430\u043a\u0442\u0438\u0432\u043d\u044b. WeatherAPI.com.', 'done');
+    if (savedToken) enzoLog('\u0422\u043e\u043a\u0435\u043d HuggingFace \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d. Deep AI \u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.', 'done');
 }, 400);
 
 fetchWeather();

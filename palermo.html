@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Palermo Studio — engineered silence beyond technology. Premium gear &amp; apparel.">
+    <title>PALERMO STUDIO | OS 2026</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #000000; --border: #e8e8e8;
+            --gray: #f9f9f9; --beige: #D2B48C; --transition: all 0.6s cubic-bezier(0.15, 0, 0.15, 1);
+            --electric-cyan: #00f2ff; --specs-bg: #f4f1ec;
+        }
+        body.night-mode { --bg: #0d0d0d; --text: #ffffff; --border: #222; --gray: #151515; --specs-bg: #1a1815; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); transition: background 0.5s; overflow-x: hidden; }
+
+        /* HEADER */
+        header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 22px 5%; display: flex; justify-content: space-between; align-items: center; background: var(--bg); border-bottom: 1px solid var(--border); transition: background 0.5s, box-shadow 0.3s; }
+        header.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.06); }
+        .logo-top { font-size: 20px; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; }
+        .nav-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .btn-mode { cursor: pointer; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--text); padding: 8px 16px; border-radius: 30px; transition: 0.3s; background: none; color: var(--text); font-weight: bold; white-space: nowrap; }
+        .btn-mode:hover { background: var(--text); color: var(--bg); }
+
+        /* SIDEBARS */
+        #side-cart, #auth-modal, #spec-modal { position: fixed; right: -100vw; top: 0; width: 100%; max-width: 450px; height: 100%; height: 100dvh; background: var(--bg); z-index: 10001; border-left: 1px solid var(--border); padding: 50px 30px; transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -20px 0 50px rgba(0,0,0,0.1); overflow-y: auto; }
+        #side-cart.open, #auth-modal.open, #spec-modal.open { right: 0; }
+        .close-trigger { cursor: pointer; opacity: 0.4; font-size: 10px; letter-spacing: 2px; margin-bottom: 40px; display: block; transition: opacity 0.3s; }
+        .close-trigger:hover { opacity: 0.8; }
+
+        /* HERO */
+        .hero { height: 100vh; height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; position: relative; overflow: hidden; }
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .hero-title-wrap { position: relative; padding-bottom: 25px; margin-bottom: 20px; z-index: 1; }
+        .hero-title { font-size: clamp(50px, 15vw, 150px); font-weight: 100; letter-spacing: 35px; text-transform: uppercase; transform: translateX(17px); }
+        .hero-underline { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--text); opacity: 0.15; transform: scaleX(0.7); }
+        .hero-nav { display: flex; gap: 25px; list-style: none; margin-top: 50px; flex-wrap: wrap; justify-content: center; z-index: 1; }
+        .hero-nav a { text-decoration: none; color: var(--text); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; transition: opacity 0.3s; }
+        .hero-nav a:hover { opacity: 0.5; }
+
+        /* SECTIONS */
+        section { padding: 120px 5%; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 10px; letter-spacing: 10px; text-transform: uppercase; text-align: center; display: block; margin-bottom: 60px; opacity: 0.5; font-weight: bold; }
+
+        /* CATALOG */
+        .catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .card { text-align: center; margin-bottom: 30px; }
+        .img-wrap { width: 100%; height: 500px; border-radius: 40px; border: 1px solid var(--border); position: relative; background: var(--gray); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .gear-img { max-width: 90%; max-height: 90%; object-fit: contain; transition: var(--transition); }
+        .card:hover .gear-img { transform: scale(1.08); }
+        .price-tag { font-size: 11px; letter-spacing: 2px; margin: 15px 0; font-weight: bold; opacity: 0.6; }
+
+        /* LOOK BUILDER */
+        .builder-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
+        .item-row { display: flex; align-items: center; gap: 25px; padding: 25px; border: 1px solid var(--border); border-radius: 30px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; background: var(--bg); color: var(--text); }
+        .item-row.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
+        .item-thumb { width: 60px; height: 60px; border-radius: 12px; object-fit: contain; background: #fff; padding: 5px; }
+
+        /* THE CLUB */
+        #club-section { background: var(--gray); text-align: center; position: relative; min-height: 400px; border-radius: 80px; margin: 0 5%; overflow: hidden; }
+        .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gray); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: 1s; border-radius: 80px; }
+        .lock-overlay.unlocked { opacity: 0; pointer-events: none; transform: translateY(-50px); }
+        .tech-lock { width: 60px; height: 60px; border: 2px solid var(--text); border-radius: 50%; margin-bottom: 20px; position: relative; }
+        .tech-lock::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--beige); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
+        /* ORIGINS */
+        .founders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 80px; align-items: start; }
+        .f-img-box { width: 100%; height: 550px; background: var(--gray); border-radius: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); }
+        .f-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); transition: 1s; }
+        .f-img-box:hover img { filter: grayscale(0); }
+        .founder-name { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-top: 25px; font-weight: bold; text-align: center; }
+        .fob-showcase { width: 100%; height: 700px; border-radius: 40px; overflow: hidden; border: 1px solid var(--border); background: var(--gray); display: flex; align-items: center; justify-content: center; }
+        .fob-showcase img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 1.5s; }
+        .fob-showcase:hover img { filter: grayscale(0); }
+
+        /* ENZO LAB */
+        .lab-box { background: var(--gray); border-radius: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 60px; align-items: center; }
+        .mirror { height: 650px; border-radius: 40px; background: #000; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+        .mirror img { max-width: 100%; max-height: 100%; object-fit: contain; opacity: 0.9; transition: opacity 0.5s; }
+        .scan-line { width: 100%; height: 2px; background: #fff; position: absolute; top: 0; left: 0; animation: scanAnim 4s infinite linear; opacity: 0.3; z-index: 25; box-shadow: 0 0 15px #fff; }
+        @keyframes scanAnim { 0%, 100% { top: 0; } 50% { top: 100%; } }
+        #ai-loader { display: none; position: absolute; width: 60px; height: 60px; border: 3px solid rgba(210, 180, 140, 0.1); border-top: 3px solid var(--beige); border-radius: 50%; animation: spin 1s infinite; z-index: 30; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* STATS */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1100px; margin: 60px auto; text-align: center; }
+        .stat-item { padding: 40px 20px; border: 1px solid var(--border); border-radius: 30px; transition: 0.3s; }
+        .stat-item:hover { border-color: var(--beige); }
+        .stat-num { font-size: clamp(36px, 6vw, 60px); font-weight: 100; letter-spacing: 3px; color: var(--beige); }
+        .stat-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-top: 10px; opacity: 0.5; }
+
+        /* NEWSLETTER */
+        .newsletter-box { max-width: 600px; margin: 0 auto; text-align: center; }
+        .news-input-group { display: flex; gap: 10px; margin-top: 30px; }
+        .news-input { flex: 1; padding: 18px 24px; border-radius: 40px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 14px; outline: none; transition: border 0.3s; }
+        .news-input:focus { border-color: var(--beige); }
+        .news-btn { padding: 18px 36px; border-radius: 40px; border: none; background: var(--text); color: var(--bg); font-size: 10px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        .news-btn:hover { opacity: 0.8; }
+
+        /* BACK TO TOP */
+        #back-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; z-index: 9998; font-size: 20px; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: all 0.4s; pointer-events: none; }
+        #back-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+        /* SCROLL REVEAL */
+        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* BUTTONS & UTILS */
+        .btn-lux { width: 100%; padding: 22px; background: var(--text); color: var(--bg); border: none; border-radius: 20px; font-size: 10px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase; margin-top: 20px; cursor: pointer; transition: 0.3s; }
+        .btn-lux:hover { opacity: 0.8; }
+        .faq-item { border-bottom: 1px solid var(--border); padding: 35px 0; cursor: pointer; }
+        .faq-a { font-size: 13px; line-height: 2; opacity: 0; max-height: 0; overflow: hidden; transition: 0.5s; }
+        .faq-item.active .faq-a { opacity: 0.5; max-height: 300px; padding-top: 25px; }
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 20px 40px; border-radius: 100px; font-size: 11px; z-index: 20000; transition: 0.5s; white-space: nowrap; }
+        #toast.show { bottom: 40px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header { padding: 15px 4%; }
+            .logo-top { font-size: 16px; letter-spacing: 6px; }
+            .hero-title { letter-spacing: 15px; transform: translateX(8px); }
+            .hero-nav { gap: 12px; }
+            .hero-nav a { font-size: 9px; letter-spacing: 1px; }
+            .lab-box { grid-template-columns: 1fr; padding: 30px; border-radius: 40px; gap: 30px; }
+            .mirror { height: 350px; }
+            .builder-container { grid-template-columns: 1fr; }
+            .founders-grid { grid-template-columns: 1fr; }
+            .f-img-box { height: 350px; }
+            .fob-showcase { height: 350px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .news-input-group { flex-direction: column; }
+            #club-section { border-radius: 40px; margin: 0 2%; }
+            #side-cart, #auth-modal, #spec-modal { max-width: 100%; }
+            .catalog { grid-template-columns: 1fr; }
+            section { padding: 80px 4%; }
+        }
+    </style>
+</head>
+<body id="body">
+    <header id="header">
+        <div class="logo-top">PALERMO</div>
+        <div class="nav-top">
+            <div class="btn-mode" onclick="toggleThermal()">Thermal</div>
+            <div class="btn-mode" onclick="document.body.classList.toggle('night-mode'); saveTheme()">Atmosphere</div>
+            <div class="btn-mode" onclick="document.getElementById('spec-modal').classList.toggle('open')">Specs</div>
+            <div class="btn-mode" id="id-label" onclick="toggleAuth()">ID</div>
+            <div class="btn-mode" onclick="toggleCart()">Bag (<span id="cart-q">0</span>)</div>
+        </div>
+    </header>
+
+    <div id="spec-modal">
+        <span class="close-trigger" onclick="this.parentElement.classList.remove('open')">← BACK</span>
+        <h2 style="letter-spacing:3px;">Specifications</h2>
+        <div style="background:var(--specs-bg); padding:30px; margin-top:20px; border-radius:15px;">
+            <p style="font-size:14px; line-height:2.5; color:var(--beige);">
+                <b>Drag Coefficient:</b> 0.24 Cd<br>
+                <b>Series:</b> Alpha V1<br>
+                <b>Material:</b> AeroCarbon Composite<br>
+                <b>Weight:</b> 1.2 kg<br>
+                <b>Origin:</b> Yoshkar-Ola Lab
+            </p>
+        </div>
+    </div>
+
+    <div id="auth-modal">
+        <span class="close-trigger" onclick="toggleAuth()">← BACK</span>
+        <h2 style="letter-spacing:3px;">Identity</h2>
+        <input style="width:100%; padding:18px; margin:20px 0; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:14px;" type="text" placeholder="EMAIL" id="login-field">
+        <button class="btn-lux" onclick="login()" style="margin-top:0;">Sync Identity</button>
+    </div>
+
+    <div id="side-cart">
+        <span class="close-trigger" onclick="toggleCart()">← CLOSE</span>
+        <h2 style="letter-spacing:3px;">Shopping Bag</h2>
+        <div id="cart-list"><p style="opacity:0.3; margin-top:30px; font-size:14px;">Your bag is empty</p></div>
+        <div style="position:absolute; bottom:50px; width:calc(100% - 60px);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:14px;">
+                <b>Total:</b><b id="cart-total">0 ₽</b>
+            </div>
+            <button class="btn-lux" style="margin:0" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- 1. HERO -->
+    <section class="hero" id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-title-wrap"><h1 class="hero-title">PALERMO</h1><div class="hero-underline"></div></div>
+        <ul class="hero-nav">
+            <li><a href="#collab">Collab</a></li>
+            <li><a href="#mainline">Essentials</a></li>
+            <li><a href="#lab">ENZO</a></li>
+            <li><a href="#builder">Builder</a></li>
+            <li><a href="#club-section">Club</a></li>
+            <li><a href="#origins">Origins</a></li>
+            <li><a href="#stats">Stats</a></li>
+            <li><a href="#maxxmoto">MaxxMoto</a></li>
+        </ul>
+    </section>
+
+    <!-- 2. COLLAB -->
+    <section id="collab" class="reveal">
+        <h2 style="font-family:'Arial Black'; font-style:italic; font-weight:900; font-size:clamp(22px,5vw,32px); text-transform:uppercase; text-align:center; margin-bottom:50px; background:linear-gradient(90deg, var(--text), #999); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Palermo x MaxxMoto</h2>
+        <div class="catalog">
+            <div class="card">
+                <div class="img-wrap"><img src="jacket.jpeg" class="gear-img" loading="lazy" alt="Aero Jacket" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">145 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Aero Jacket', 145000)">Add to bag</button>
+            </div>
+            <div class="card">
+                <div class="img-wrap"><img src="glovo.jpeg" class="gear-img" loading="lazy" alt="Glovo Gloves" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">32 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Glovo Gloves', 32000)">Add to bag</button>
+            </div>
+            <div class="card">
+                <div class="img-wrap"><img src="moto1.jpeg" class="gear-img" loading="lazy" alt="Armor v1" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">180 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Armor v1', 180000)">Add to bag</button>
+            </div>
+            <div class="card">
+                <div class="img-wrap"><img src="moto2.jpeg" class="gear-img" loading="lazy" alt="Armor v2" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">195 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Armor v2', 195000)">Add to bag</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ESSENTIALS -->
+    <section id="mainline" class="reveal">
+        <span class="section-label">Palermo Essentials</span>
+        <div class="catalog">
+            <div class="card">
+                <div class="img-wrap"><img src="shirt.jpeg" class="gear-img" loading="lazy" alt="Studio Shirt" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">45 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Studio Shirt', 45000)">Add to bag</button>
+            </div>
+            <div class="card">
+                <div class="img-wrap"><img src="sumka.jpeg" class="gear-img" loading="lazy" alt="Leather Bag" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">120 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Leather Bag', 120000)">Add to bag</button>
+            </div>
+            <div class="card">
+                <div class="img-wrap"><img src="tufli.jpeg" class="gear-img" loading="lazy" alt="Studio Shoes" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2214%22>IMG</text></svg>'"></div>
+                <div class="price-tag">85 000 ₽</div>
+                <button class="btn-lux" onclick="buy('Studio Shoes', 85000)">Add to bag</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. ENZO SCANNER -->
+    <section id="lab" class="reveal">
+        <span class="section-label">ENZO Neural Lab</span>
+        <div class="lab-box">
+            <div class="mirror">
+                <div class="scan-line"></div>
+                <div id="ai-loader"></div>
+                <img src="robot.jpg" id="v-port" alt="ENZO Scanner" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23111%22 width=%22200%22 height=%22200%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23555%22 font-size=%2214%22>SCAN</text></svg>'">
+            </div>
+            <div>
+                <p id="enzo-text" style="font-size:16px; line-height:2; border-left:2px solid var(--text); padding-left:30px; margin-bottom:30px;">
+                    <b>ENZO:</b> Оптические системы активны. Загрузите прототип.
+                </p>
+                <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+                    <button class="btn-lux" style="margin:0; padding:10px 20px;" onclick="changeLight('day')">Daylight</button>
+                    <button class="btn-lux" style="margin:0; padding:10px 20px;" onclick="changeLight('night')">Night Scan</button>
+                </div>
+                <button class="btn-lux" style="background:none; border:1px dashed var(--text); color:var(--text);" onclick="loadMax()">Load Photo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. LOOK BUILDER -->
+    <section id="builder" class="reveal">
+        <span class="section-label">Look Builder</span>
+        <div class="builder-container">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div class="item-row" onclick="sel('Aero Jacket', this)"><img src="jacket.jpeg" class="item-thumb" alt="Aero Jacket"><b>Aero Jacket</b></div>
+                <div class="item-row" onclick="sel('Leather Bag', this)"><img src="sumka.jpeg" class="item-thumb" alt="Leather Bag"><b>Leather Bag</b></div>
+                <div class="item-row" onclick="sel('Armor v1', this)"><img src="moto1.jpeg" class="item-thumb" alt="Armor v1"><b>Armor v1</b></div>
+                <div class="item-row" onclick="sel('Studio Shoes', this)"><img src="tufli.jpeg" class="item-thumb" alt="Studio Shoes"><b>Studio Shoes</b></div>
+            </div>
+            <div style="background:var(--gray); border-radius:40px; display:flex; align-items:center; justify-content:center; padding:40px; text-align:center; min-height:300px;">
+                <div>
+                    <p id="l-msg" style="font-size:16px;">Выберите элементы...</p>
+                    <p id="l-price" style="font-size:11px; letter-spacing:2px; margin-top:10px; opacity:0.5;"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. THE CLUB -->
+    <section id="club-section" class="reveal">
+        <span class="section-label">Palermo [PRIVATE] Club</span>
+        <div class="lock-overlay" id="club-lock">
+            <div class="tech-lock"></div>
+            <h2 style="letter-spacing:5px; font-weight:300;">Identity Required</h2>
+            <p style="font-size:12px; opacity:0.4; margin-top:10px;">Members-only access. Sync your ID to unlock.</p>
+            <button class="btn-lux" onclick="toggleAuth()" style="width:auto; padding:15px 40px; margin-top:20px;">Authorize</button>
+        </div>
+        <div id="club-inner" style="opacity:0.1; filter:blur(10px); transition:1.5s; display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:30px; max-width:1200px; margin:0 auto; padding:60px 0;">
+            <div style="border:1px solid var(--border); padding:40px; border-radius:30px; transition:0.3s;" onmouseover="this.style.borderColor='var(--beige)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:40px; margin-bottom:15px;">&#9650;</div>
+                <b>STATUS:</b> LEVEL ALPHA
+            </div>
+            <div style="border:1px solid var(--border); padding:40px; border-radius:30px; transition:0.3s;" onmouseover="this.style.borderColor='var(--beige)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:40px; margin-bottom:15px;">&#9830;</div>
+                <b>OFFER:</b> -15% SITEWIDE
+            </div>
+            <div style="border:1px solid var(--border); padding:40px; border-radius:30px; transition:0.3s;" onmouseover="this.style.borderColor='var(--beige)'" onmouseout="this.style.borderColor='var(--border)'">
+                <div style="font-size:40px; margin-bottom:15px;">&#9679;</div>
+                <b>INSIDER:</b> V2 CONCEPT
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. ORIGINS -->
+    <section id="origins" class="reveal">
+        <span class="section-label">Palermo Origins</span>
+        <div class="founders-grid">
+            <div style="text-align:center;">
+                <div class="f-img-box"><img src="f1.jpeg" alt="Evsin Stepan" loading="lazy" onerror="this.style.background='var(--gray)'"></div>
+                <p class="founder-name">Евсин Степан Витальевич</p>
+            </div>
+            <div style="text-align:center;">
+                <div class="f-img-box"><img src="f2.jpeg" alt="Ulyanets Maxim" loading="lazy" onerror="this.style.background='var(--gray)'"></div>
+                <p class="founder-name">Ульянец Максим Владиславович</p>
+            </div>
+        </div>
+        <p style="max-width:850px; margin:40px auto; font-size:18px; line-height:2.2; text-align:center; font-weight:300;">Palermo Studio возникла на стыке холодной точности и дикой скорости. Минимализм форм, максимализм инженерии. Каждая линия — результат тысяч часов расчетов и бескомпромиссного подхода к материалам.</p>
+        <div class="fob-showcase"><img src="fob.jpeg" alt="Palermo FOB" loading="lazy"></div>
+        <div style="font-size: clamp(14px, 2.5vw, 20px); letter-spacing: 20px; text-transform: uppercase; text-align: center; margin: 80px 0; font-weight: 200; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 0;">ENGINEERED SILENCE. BEYOND TECHNOLOGY.</div>
+    </section>
+
+    <!-- 8. STATS -->
+    <section id="stats" class="reveal">
+        <span class="section-label">Numbers That Matter</span>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-num" data-target="1247">0</div>
+                <div class="stat-label">Units Shipped</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" data-target="38">0</div>
+                <div class="stat-label">Dealer Network</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" data-target="12">0</div>
+                <div class="stat-label">Test Stages</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num" data-target="2022">0</div>
+                <div class="stat-label">Founded</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. MAXXMOTO -->
+    <section id="maxxmoto" class="reveal">
+        <span class="section-label">The Partnership: MaxxMoto</span>
+        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:80px; align-items:center;">
+            <div style="height:650px; border-radius:40px; border:1px solid var(--border); overflow:hidden; background:#000; display:flex; align-items:center; justify-content:center;">
+                <img src="maksim.jpeg" alt="MaxxMoto" loading="lazy" style="width:100%; height:100%; object-fit:cover; filter:grayscale(1); transition:1s;" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'">
+            </div>
+            <div style="font-size: 20px; line-height: 1.8; font-weight: 300; border-left: 3px solid var(--text); padding-left: 40px;">
+                MaxxMoto — крупнейший сейлер мототехники, базирующийся в Йошкар-Оле. Обладая объемами поставок, исчисляемыми миллионами рублей, компания стала ключевым партнером Palermo Studio. Этот раздел посвящен синергии инженерного мастерства и высоких продаж, которые лежат в основе нашего общего успеха.
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. NEWSLETTER -->
+    <section id="newsletter" class="reveal">
+        <span class="section-label">Stay Connected</span>
+        <div class="newsletter-box">
+            <p style="font-size:16px; line-height:1.8; opacity:0.6;">Подпишитесь на закрытые дропы и ранний доступ к коллекциям Palermo Studio.</p>
+            <div class="news-input-group">
+                <input type="email" class="news-input" placeholder="your@email.com" id="news-email">
+                <button class="news-btn" onclick="subscribe()">Subscribe</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. WEATHER -->
+    <section id="comfort" class="reveal">
+        <div style="display:flex; align-items:center; gap:60px; justify-content:center; flex-wrap:wrap;">
+            <div style="font-size:80px; font-weight:100; color:var(--electric-cyan); text-shadow:0 0 30px rgba(0, 242, 255, 0.3);">-2°C</div>
+            <p style="max-width:500px; font-size:16px; line-height:1.8; border-left:2px solid var(--text); padding-left:25px;"><b>ENZO:</b> В Йошкар-Оле мороз. Система активировала Electric Cyan режим.</p>
+        </div>
+    </section>
+
+    <!-- 12. MAP -->
+    <section id="stores" class="reveal">
+        <div style="height:700px; border-radius:40px; overflow:hidden; border:1px solid var(--border);">
+            <img src="map.jpg" alt="Store Map" loading="lazy" style="width:100%; height:100%; object-fit:contain;" onerror="this.style.background='var(--gray)'">
+        </div>
+    </section>
+
+    <!-- 13. FAQ -->
+    <section id="faq" class="reveal">
+        <span class="section-label">F.A.Q.</span>
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <div class="faq-item" onclick="this.classList.toggle('active')">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; letter-spacing:2px; text-transform:uppercase; font-size:13px;">Доставка и логистика<span>+</span></div>
+                <div class="faq-a">Доставка осуществляется из хаба в Йошкар-Оле в течение 3-7 дней по всему миру. Международные заказы обрабатываются через DHL Express с полным отслеживанием.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('active')">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; letter-spacing:2px; text-transform:uppercase; font-size:13px;">Гарантия на MaxxMoto Gear<span>+</span></div>
+                <div class="faq-a">Вся экипировка проходит 12 этапов тестирования и имеет пожизненную гарантию на производственные дефекты. Расширенная гарантия доступна для членов клуба.</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('active')">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; letter-spacing:2px; text-transform:uppercase; font-size:13px;">Что такое ENZO Lab?<span>+</span></div>
+                <div class="faq-a">Это проприетарный ИИ-ассистент для калибровки силуэта и подбора материалов. Нейросеть анализирует оптические данные и предлагает оптимальные сочетания экипировки.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p style="text-align:center; opacity:0.2; padding:80px 20px; font-size:10px; letter-spacing:10px;">PALERMO STUDIO &copy; 2026</p>
+    </footer>
+
+    <div id="toast">Ready</div>
+    <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">&uarr;</button>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('palermo_cart') || '[]');
+
+        function saveCart() { localStorage.setItem('palermo_cart', JSON.stringify(cart)); }
+        function saveTheme() { localStorage.setItem('palermo_theme', document.body.classList.contains('night-mode') ? 'night' : 'day'); }
+
+        function buy(n, p) {
+            cart.push({ n, p, id: Date.now() });
+            saveCart();
+            updateCart();
+            toast(n + " &mdash; added");
+        }
+
+        function removeItem(id) {
+            cart = cart.filter(i => i.id !== id);
+            saveCart();
+            updateCart();
+        }
+
+        function toggleCart() { document.getElementById('side-cart').classList.toggle('open'); if (document.getElementById('side-cart').classList.contains('open')) updateCart(); }
+        function toggleAuth() { document.getElementById('auth-modal').classList.toggle('open'); }
+
+        function login() {
+            toast("Welcome, Evsin Stepan");
+            document.getElementById('id-label').innerText = "Evsin Stepan";
+            document.getElementById('club-lock').classList.add('unlocked');
+            document.getElementById('club-inner').style.opacity = "1";
+            document.getElementById('club-inner').style.filter = "blur(0)";
+            toggleAuth();
+        }
+
+        function updateCart() {
+            const list = document.getElementById('cart-list');
+            const total = cart.reduce((s, i) => s + i.p, 0);
+            document.getElementById('cart-q').innerText = cart.length;
+            document.getElementById('cart-total').innerText = total.toLocaleString() + " ₽";
+            if (cart.length === 0) {
+                list.innerHTML = '<p style="opacity:0.3; margin-top:30px; font-size:14px;">Your bag is empty</p>';
+            } else {
+                list.innerHTML = cart.map(i =>
+                    `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:13px; gap:10px;">
+                        <span style="flex:1;">${i.n}</span>
+                        <span style="white-space:nowrap;">${i.p.toLocaleString()} ₽</span>
+                        <span style="cursor:pointer; opacity:0.3; font-size:18px;" onclick="removeItem(${i.id})" title="Remove">&times;</span>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        function checkout() {
+            if (cart.length === 0) { toast("Bag is empty"); return; }
+            toast("Order placed &mdash; " + cart.length + " items");
+            cart = [];
+            saveCart();
+            updateCart();
+            toggleCart();
+        }
+
+        function toast(m) {
+            const t = document.getElementById('toast');
+            t.innerHTML = m;
+            t.classList.add('show');
+            clearTimeout(t._timeout);
+            t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function toggleThermal() {
+            document.getElementById('body').classList.toggle('thermal-active');
+            const hero = document.getElementById('hero');
+            if (document.body.classList.contains('thermal-active')) {
+                hero.style.background = '#1a0000';
+                document.querySelector('.hero-title').style.color = '#ff3300';
+            } else {
+                hero.style.background = '';
+                document.querySelector('.hero-title').style.color = '';
+            }
+            toast("Thermal mode " + (document.body.classList.contains('thermal-active') ? 'ON' : 'OFF'));
+        }
+
+        let isMax = false;
+        function loadMax() {
+            document.getElementById('v-port').src = "max1.jpeg";
+            isMax = true;
+            document.getElementById('enzo-text').innerHTML = '<b>ENZO:</b> Прототип загружен. Анализирую геометрию и тепловые сигнатуры...';
+            toast("Photo Loaded");
+        }
+
+        function changeLight(m) {
+            if (!isMax) { toast("Сначала загрузите фото"); return; }
+            const l = document.getElementById('ai-loader');
+            const img = document.getElementById('v-port');
+            const txt = document.getElementById('enzo-text');
+            l.style.display = "block";
+            img.style.opacity = "0.2";
+            txt.innerHTML = '<b>ENZO:</b> Сканирование ' + (m === 'night' ? 'ночного' : 'дневного') + ' спектра...';
+            setTimeout(() => {
+                img.src = (m === 'night') ? "max2.jpeg" : "max1.jpeg";
+                img.style.opacity = "0.9";
+                l.style.display = "none";
+                txt.innerHTML = '<b>ENZO:</b> Сканирование завершено. Данные калиброваны.';
+            }, 3000);
+        }
+
+        let sItems = [];
+        function sel(n, e) {
+            e.classList.toggle('selected');
+            if (sItems.includes(n)) sItems = sItems.filter(i => i !== n);
+            else sItems.push(n);
+            const msg = document.getElementById('l-msg');
+            const price = document.getElementById('l-price');
+            if (sItems.length > 0) {
+                msg.innerHTML = '<b>ENZO:</b> Анализ сочетания: <i>' + sItems.join(' + ') + '</i>';
+                price.innerText = 'Комбинаций в базе: ' + sItems.length * 3;
+            } else {
+                msg.innerText = 'Выберите элементы...';
+                price.innerText = '';
+            }
+        }
+
+        function subscribe() {
+            const email = document.getElementById('news-email').value.trim();
+            if (!email || !email.includes('@')) { toast("Enter a valid email"); return; }
+            toast("Subscribed: " + email);
+            document.getElementById('news-email').value = '';
+        }
+
+        // Scroll reveal
+        const revealEls = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+        revealEls.forEach(el => observer.observe(el));
+
+        // Back to top
+        const backBtn = document.getElementById('back-top');
+        window.addEventListener('scroll', () => {
+            backBtn.classList.toggle('visible', window.scrollY > 600);
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Header scroll shadow
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Stats counter animation
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const nums = e.target.querySelectorAll('.stat-num');
+                    nums.forEach(n => {
+                        const target = +n.dataset.target;
+                        const dur = 2000;
+                        const start = performance.now();
+                        function tick(now) {
+                            const elapsed = now - start;
+                            const progress = Math.min(elapsed / dur, 1);
+                            const eased = 1 - Math.pow(1 - progress, 3);
+                            n.innerText = Math.floor(eased * target);
+                            if (progress < 1) requestAnimationFrame(tick);
+                            else n.innerText = target.toLocaleString();
+                        }
+                        requestAnimationFrame(tick);
+                    });
+                    statsObserver.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        const statsSection = document.getElementById('stats');
+        if (statsSection) statsObserver.observe(statsSection);
+
+        // Hero canvas particles
+        (function() {
+            const canvas = document.getElementById('hero-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let animId;
+
+            function resize() {
+                canvas.width = canvas.parentElement.offsetWidth;
+                canvas.height = canvas.parentElement.offsetHeight;
+            }
+
+            function createParticles() {
+                particles = [];
+                const count = Math.min(60, Math.floor(canvas.width / 20));
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        r: Math.random() * 1.5 + 0.5,
+                        dx: (Math.random() - 0.5) * 0.5,
+                        dy: (Math.random() - 0.5) * 0.5,
+                        alpha: Math.random() * 0.4 + 0.1
+                    });
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const color = document.body.classList.contains('night-mode') ? '255,255,255' : '0,0,0';
+                particles.forEach(p => {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color},${p.alpha})`;
+                    ctx.fill();
+                });
+                // Draw connections
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(${color},${0.03 * (1 - dist / 150)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                animId = requestAnimationFrame(draw);
+            }
+
+            resize();
+            createParticles();
+            draw();
+            window.addEventListener('resize', () => { resize(); createParticles(); });
+        })();
+
+        // Load saved theme
+        if (localStorage.getItem('palermo_theme') === 'night') {
+            document.body.classList.add('night-mode');
+        }
+
+        // Init cart display
+        updateCart();
+        window.scrollTo(0, 0);
+    </script>
+</body>
+</html>

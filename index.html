@@ -194,7 +194,7 @@
             <div class="mirror">
                 <div class="scan-line"></div>
                 <div id="ai-loader"></div>
-                <img src="robot.webp" id="v-port" alt="ENZO Scanner" fetchpriority="high">
+                <img src="new_robot.jpg" id="v-port" alt="ENZO Scanner" fetchpriority="high">
             </div>
             <div class="enzo-panel">
                 <div class="enzo-header">
@@ -209,6 +209,9 @@
                     <button class="btn-enzo" onclick="changeLight('day')">☀ День</button>
                     <button class="btn-enzo" onclick="changeLight('night')">🌙 Ночь</button>
                     <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">Deep AI</button>
+                </div>
+                <div style="display:flex; gap:6px; margin-top:6px; align-items:center;">
+                    <input type="text" id="hf-token-input" placeholder="HF токен (сохраняется локально)" style="flex:1; margin:0; padding:8px 12px; font-size:9px; border-radius:8px; font-family:monospace;" onchange="localStorage.setItem('hf_token', this.value.trim())">
                 </div>
             </div>
         </div>
