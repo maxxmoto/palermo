@@ -193,17 +193,19 @@
                 <img src="robot.jpg" id="v-port" alt="ENZO Scanner">
             </div>
             <div class="enzo-panel">
-                <div class="enzo-log" id="enzo-log">
-                    <div class="line"><span class="ts">[ENZO]</span> Оптические системы активны.</div>
-                    <div class="line"><span class="ts">[ENZO]</span> Ожидаю данных погоды...</div>
+                <div class="enzo-header">
+                    <span class="enzo-badge">ENZO Assistant</span>
+                    <span style="font-size:9px; letter-spacing:1px; opacity:0.3;">v3.2</span>
+                </div>
+                <div class="enzo-feed" id="enzo-feed">
+                    <div class="enzo-msg"><span class="enzo-label">ENZO</span>Оптические системы активны. Ожидаю данные.</div>
                 </div>
                 <div class="enzo-actions">
-                    <button class="btn-enzo" onclick="loadMax()">📷 Загрузить</button>
+                    <button class="btn-enzo" onclick="loadMax()">Загрузить фото</button>
                     <button class="btn-enzo" onclick="changeLight('day')">☀ День</button>
                     <button class="btn-enzo" onclick="changeLight('night')">🌙 Ночь</button>
-                    <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">🧠 Deep AI</button>
+                    <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">Deep AI</button>
                 </div>
-                <p style="font-size:10px; opacity:0.3; margin-top:4px;">ENZO v3.2 — WeatherAPI.com</p>
             </div>
         </div>
     </section>

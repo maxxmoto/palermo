@@ -107,18 +107,46 @@ window.selectSize = function (el) {
 // ── ENZO ──
 var isMax = false;
 
-window.enzoLog = function (msg) {
-    var log = document.getElementById('enzo-log');
-    var time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    log.innerHTML += '<div class="line"><span class="ts">[' + time + ']</span> ' + msg + '</div>';
-    log.scrollTop = log.scrollHeight;
+window.enzoLog = function (msg, type) {
+    var feed = document.getElementById('enzo-feed');
+    if (!feed) return;
+    type = type || '';
+    var div = document.createElement('div');
+    div.className = 'enzo-msg' + (type ? ' ' + type : '');
+    div.innerHTML = '<span class="enzo-label">ENZO</span>' + msg;
+    feed.appendChild(div);
+    feed.scrollTop = feed.scrollHeight;
+    return div;
 };
 
 window.loadMax = function () {
-    document.getElementById('v-port').src = 'max1.jpeg';
-    isMax = true;
-    enzoLog('\u041f\u0440\u043e\u0442\u043e\u0442\u0438\u043f \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d.');
-    toast('Photo Loaded');
+    if (isMax) { enzoLog('\u041f\u0440\u043e\u0442\u043e\u0442\u0438\u043f \u0443\u0436\u0435 \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d.'); return; }
+
+    var img = document.getElementById('v-port');
+    img.style.opacity = '0.15';
+
+    // ── 7-8 sec loading sequence ──
+    var seq = [
+        { t: 0,    m: '\u0410\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u0443\u044e \u043f\u0430\u043b\u0438\u0442\u0440\u0443...', type: 'processing' },
+        { t: 1400, m: '\u041f\u043e\u0434\u0431\u0438\u0440\u0430\u044e \u043e\u0442\u0442\u0435\u043d\u043a\u0438 \u0438 \u043a\u043e\u043d\u0442\u0440\u0430\u0441\u0442...', type: 'processing' },
+        { t: 2800, m: '\u041a\u0430\u043b\u0438\u0431\u0440\u0443\u044e \u0441\u0432\u0435\u0442\u043e\u0432\u0443\u044e \u0442\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0443...', type: 'processing' },
+        { t: 4200, m: '\u0420\u0435\u043d\u0434\u0435\u0440\u044e \u0441\u0438\u043b\u0443\u044d\u0442 \u0438 \u043f\u0440\u043e\u043f\u043e\u0440\u0446\u0438\u0438...', type: 'processing' },
+        { t: 5600, m: '\u041e\u043f\u0442\u0438\u043c\u0438\u0437\u0438\u0440\u0443\u044e \u0442\u0435\u043a\u0441\u0442\u0443\u0440\u044b...', type: 'processing' },
+    ];
+
+    seq.forEach(function (s) {
+        setTimeout(function () {
+            enzoLog(s.m, s.type);
+        }, s.t);
+    });
+
+    setTimeout(function () {
+        img.src = 'max1.jpeg';
+        img.style.opacity = '0.9';
+        isMax = true;
+        enzoLog('\u041f\u0440\u043e\u0442\u043e\u0442\u0438\u043f \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d. \u0413\u043e\u0442\u043e\u0432 \u043a \u0441\u043a\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044e.', 'done');
+        toast('Photo Loaded');
+    }, 7000);
 };
 
 window.changeLight = function (mode) {
@@ -127,12 +155,13 @@ window.changeLight = function (mode) {
     var img = document.getElementById('v-port');
     l.style.display = 'block';
     img.style.opacity = '0.2';
-    enzoLog('\u0421\u043a\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0432 ' + (mode === 'night' ? '\u043d\u043e\u0447\u043d\u043e\u043c' : '\u0434\u043d\u0435\u0432\u043d\u043e\u043c') + ' \u0441\u043f\u0435\u043a\u0442\u0440\u0435...');
+    var label = mode === 'night' ? '\u043d\u043e\u0447\u043d\u043e\u043c' : '\u0434\u043d\u0435\u0432\u043d\u043e\u043c';
+    enzoLog('\u0421\u043a\u0430\u043d\u0438\u0440\u0443\u044e \u0432 ' + label + ' \u0441\u043f\u0435\u043a\u0442\u0440\u0435...', 'processing');
     setTimeout(function () {
         img.src = (mode === 'night') ? 'max2.jpeg' : 'max1.jpeg';
         img.style.opacity = '0.9';
         l.style.display = 'none';
-        enzoLog('\u0421\u043a\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e.');
+        enzoLog('\u0421\u043a\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e.', 'done');
     }, 2500);
 };
 
@@ -143,12 +172,14 @@ window.enzoDeepAnalysis = function () {
     var cartItems = cart.map(function (i) { return i.n; }).join(', ') || '\u043d\u0438\u0447\u0435\u0433\u043e';
     var prompt = '<s>[INST] \u0422\u044b \u2014 ENZO, \u0418\u0418-\u0441\u0442\u0438\u043b\u0438\u0441\u0442 Palermo Studio (\u0419\u043e\u0448\u043a\u0430\u0440-\u041e\u043b\u0430). \u0422\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0430: ' + tempText + '. \u0412 \u043a\u043e\u0440\u0437\u0438\u043d\u0435: ' + cartItems + '. \u0414\u0430\u0439 \u043a\u043e\u0440\u043e\u0442\u043a\u0438\u0439 (2-3 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f) \u0441\u0442\u0438\u043b\u044c\u043d\u044b\u0439 \u0441\u043e\u0432\u0435\u0442 \u043f\u043e \u044d\u043a\u0438\u043f\u0438\u0440\u043e\u0432\u043a\u0435 \u0434\u043b\u044f \u043c\u043e\u0442\u043e\u0446\u0438\u043a\u043b\u0438\u0441\u0442\u0430. \u0420\u0443\u0441\u0441\u043a\u0438\u0439, \u0443\u0432\u0435\u0440\u0435\u043d\u043d\u043e, \u0431\u0435\u0437 \u043c\u0430\u0440\u043a\u0434\u0430\u0443\u043d\u0430. [/INST]';
 
-    enzoLog('\u26a0\ufe0f AI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d. \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0430\u043b\u0438\u0437:');
+    enzoLog('\u26a0\ufe0f AI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d. \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0430\u043b\u0438\u0437:', 'processing');
     var temp = parseInt(tempText);
     var advice = !isNaN(temp)
         ? (temp < 0 ? '\u041c\u043e\u0440\u043e\u0437 \u2014 Aero Jacket + Electric Cyan.' : temp < 10 ? '\u041f\u0440\u043e\u0445\u043b\u0430\u0434\u043d\u043e \u2014 Armor v1 + Glovo Gloves.' : temp < 20 ? '\u041a\u043e\u043c\u0444\u043e\u0440\u0442 \u2014 Studio Shirt + Leather Bag.' : '\u0422\u0435\u043f\u043b\u043e \u2014 \u043e\u0431\u043b\u0435\u0433\u0447\u0451\u043d\u043d\u044b\u0439 \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442.')
         : 'Armor v2 \u2014 \u0443\u043d\u0438\u0432\u0435\u0440\u0441\u0430\u043b\u044c\u043d\u043e\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435.';
-    enzoLog('\u2705 ' + advice);
+    setTimeout(function () {
+        enzoLog(advice, 'done');
+    }, 1500);
 };
 
 // ── LOOK BUILDER ──
@@ -208,7 +239,7 @@ function fetchWeather() {
             if (wind >= 10) advice += ' \u0412\u0435\u0442\u0435\u0440 \u2014 \u0430\u044d\u0440\u043e\u0434\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u043a\u0440\u0438\u0442\u0438\u0447\u043d\u0430.';
             if (uv >= 6) advice += ' UV \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u2014 \u0437\u0430\u0449\u0438\u0442\u0430.';
             document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> ' + advice;
-            enzoLog('\u041f\u043e\u0433\u043e\u0434\u0430: ' + label + ', ' + temp + '\u00b0C (\u043e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + feels + '\u00b0C), \u0432\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441.');
+            enzoLog(label + ', ' + temp + '\u00b0C (\u043e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + feels + '\u00b0C), \u0432\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441.', 'done');
         })
         .catch(function () {
             document.getElementById('w-details').innerText = 'WeatherAPI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.';
@@ -287,9 +318,8 @@ window.toggleNight = function () {
 
 // ── INIT ──
 setTimeout(function () {
-    enzoLog('ENZO v3.2 \u0438\u043d\u0438\u0446\u0438\u0430\u043b\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u043d.');
-    enzoLog('\u0421\u0435\u043d\u0441\u043e\u0440\u044b: WeatherAPI.com.');
-}, 300);
+    enzoLog('\u0421\u0435\u043d\u0441\u043e\u0440\u044b \u0430\u043a\u0442\u0438\u0432\u043d\u044b. WeatherAPI.com.', 'done');
+}, 400);
 
 fetchWeather();
 initMap();
