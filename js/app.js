@@ -240,7 +240,36 @@ window.sel = function (name, el) {
     }
 };
 
-// ── WEATHER (WeatherAPI.com) ──
+// ── WEATHER VIDEO ──
+function setWeatherVideo(label, localtime) {
+    var video = document.getElementById('weather-video');
+    if (!video) return;
+    var hour = localtime ? parseInt(localtime.split(' ')[1].split(':')[0]) : new Date().getUTCHours() + 3;
+    var src;
+    if (hour >= 21 || hour < 6) {
+        src = 'moon.mp4';
+    } else {
+        var l = label.toLowerCase();
+        if (l.indexOf('\u044f\u0441\u043d\u043e') !== -1 || l.indexOf('\u0441\u043e\u043b\u043d\u0435\u0447\u043d\u043e') !== -1 || l.indexOf('sunny') !== -1 || l.indexOf('clear') !== -1) {
+            src = 'fun-sun.mp4';
+        } else if (l.indexOf('\u0434\u043e\u0436\u0434') !== -1 || l.indexOf('\u043b\u0438\u0432\u0435\u043d\u044c') !== -1 || l.indexOf('\u0433\u0440\u043e\u0437') !== -1 || l.indexOf('rain') !== -1 || l.indexOf('drizzle') !== -1 || l.indexOf('storm') !== -1) {
+            src = 'rain.mp4';
+        } else {
+            src = 'sun.mp4';
+        }
+    }
+    if (video.dataset.src !== src) {
+        video.dataset.src = src;
+        video.style.opacity = '0';
+        setTimeout(function () {
+            video.src = src;
+            video.play().catch(function () {});
+            video.style.opacity = '1';
+        }, 400);
+    }
+}
+
+// ── WEATHER API ──
 function fetchWeather() {
     var WAPI_KEY = '0426384116734bb4a94183926263007';
     fetch('https://api.weatherapi.com/v1/current.json?key=' + WAPI_KEY + '&q=Yoshkar-Ola&lang=ru&aqi=no')
@@ -269,6 +298,7 @@ function fetchWeather() {
             if (uv >= 6) advice += ' UV \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u2014 \u0437\u0430\u0449\u0438\u0442\u0430.';
             document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> ' + advice;
             enzoLog(label + ', ' + temp + '\u00b0C (\u043e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + feels + '\u00b0C), \u0432\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441.', 'done');
+            setWeatherVideo(label, data.location.localtime);
         })
         .catch(function () {
             document.getElementById('w-details').innerText = 'WeatherAPI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.';
