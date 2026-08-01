@@ -10,6 +10,9 @@
     <meta property="og:type" content="website">
     <title>PALERMO STUDIO | OS 2026</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://api.weatherapi.com">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -35,6 +38,7 @@
     </header>
 
     <nav id="mobile-nav">
+        <button class="burger-close" onclick="closeBurger()" aria-label="Close">✕</button>
         <a href="#collab" onclick="closeBurger()">Collab</a>
         <a href="#mainline" onclick="closeBurger()">Essentials</a>
         <a href="#lab" onclick="closeBurger()">ENZO</a>
@@ -106,7 +110,7 @@
         <h2 style="font-family:'Arial Black'; font-style:italic; font-weight:900; font-size:clamp(22px,4vw,32px); text-transform:uppercase; text-align:center; margin-bottom:50px; background:linear-gradient(90deg, var(--text), #999); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Palermo × MaxxMoto</h2>
         <div class="catalog">
             <div class="card">
-                <div class="img-wrap"><img src="jacket.jpeg" class="gear-img" alt="Aero Jacket" loading="lazy"></div>
+                <div class="img-wrap"><img src="jacket.webp" class="gear-img" alt="Aero Jacket" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">145 000 ₽</div>
                     <div class="size-row">
@@ -116,7 +120,7 @@
                 <div class="card-actions"><button class="btn-lux" onclick="buy('Aero Jacket', 145000)">Add to bag</button></div>
             </div>
             <div class="card">
-                <div class="img-wrap"><img src="glovo.jpeg" class="gear-img" alt="Glovo Gloves" loading="lazy"></div>
+                <div class="img-wrap"><img src="glovo.webp" class="gear-img" alt="Glovo Gloves" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">32 000 ₽</div>
                     <div class="size-row">
@@ -126,7 +130,7 @@
                 <div class="card-actions"><button class="btn-lux" onclick="buy('Glovo Gloves', 32000)">Add to bag</button></div>
             </div>
             <div class="card">
-                <div class="img-wrap"><img src="moto1.jpeg" class="gear-img" alt="Armor v1" loading="lazy"></div>
+                <div class="img-wrap"><img src="moto1.webp" class="gear-img" alt="Armor v1" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">180 000 ₽</div>
                     <div class="size-row">
@@ -136,7 +140,7 @@
                 <div class="card-actions"><button class="btn-lux" onclick="buy('Armor v1', 180000)">Add to bag</button></div>
             </div>
             <div class="card">
-                <div class="img-wrap"><img src="moto2.jpeg" class="gear-img" alt="Armor v2" loading="lazy"></div>
+                <div class="img-wrap"><img src="moto2.webp" class="gear-img" alt="Armor v2" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">195 000 ₽</div>
                     <div class="size-row">
@@ -153,7 +157,7 @@
         <span class="section-label">Palermo Essentials</span>
         <div class="catalog">
             <div class="card">
-                <div class="img-wrap"><img src="shirt.jpeg" class="gear-img" alt="Studio Shirt" loading="lazy"></div>
+                <div class="img-wrap"><img src="shirt.webp" class="gear-img" alt="Studio Shirt" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">45 000 ₽</div>
                     <div class="size-row">
@@ -163,7 +167,7 @@
                 <div class="card-actions"><button class="btn-lux" onclick="buy('Studio Shirt', 45000)">Add to bag</button></div>
             </div>
             <div class="card">
-                <div class="img-wrap"><img src="sumka.jpeg" class="gear-img" alt="Leather Bag" loading="lazy"></div>
+                <div class="img-wrap"><img src="sumka.webp" class="gear-img" alt="Leather Bag" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">120 000 ₽</div>
                     <div class="size-row"></div>
@@ -171,7 +175,7 @@
                 <div class="card-actions"><button class="btn-lux" onclick="buy('Leather Bag', 120000)">Add to bag</button></div>
             </div>
             <div class="card">
-                <div class="img-wrap"><img src="tufli.jpeg" class="gear-img" alt="Studio Shoes" loading="lazy"></div>
+                <div class="img-wrap"><img src="tufli.webp" class="gear-img" alt="Studio Shoes" loading="lazy" decoding="async"></div>
                 <div class="card-body">
                     <div class="price-tag">85 000 ₽</div>
                     <div class="size-row">
@@ -190,7 +194,7 @@
             <div class="mirror">
                 <div class="scan-line"></div>
                 <div id="ai-loader"></div>
-                <img src="robot.jpg" id="v-port" alt="ENZO Scanner">
+                <img src="robot.webp" id="v-port" alt="ENZO Scanner" fetchpriority="high">
             </div>
             <div class="enzo-panel">
                 <div class="enzo-header">
@@ -215,10 +219,10 @@
         <span class="section-label">Look Builder</span>
         <div class="builder-container">
             <div style="display:flex; flex-direction:column; gap:8px;">
-                <div class="item-row" onclick="sel('Aero Jacket — 145 000 ₽', this)"><img src="jacket.jpeg" class="item-thumb" alt=""><b>Aero Jacket</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">145k ₽</span></div>
-                <div class="item-row" onclick="sel('Leather Bag — 120 000 ₽', this)"><img src="sumka.jpeg" class="item-thumb" alt=""><b>Leather Bag</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">120k ₽</span></div>
-                <div class="item-row" onclick="sel('Armor v1 — 180 000 ₽', this)"><img src="moto1.jpeg" class="item-thumb" alt=""><b>Armor v1</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">180k ₽</span></div>
-                <div class="item-row" onclick="sel('Studio Shoes — 85 000 ₽', this)"><img src="tufli.jpeg" class="item-thumb" alt=""><b>Studio Shoes</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">85k ₽</span></div>
+                <div class="item-row" onclick="sel('Aero Jacket — 145 000 ₽', this)"><img src="jacket.webp" class="item-thumb" alt=""><b>Aero Jacket</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">145k ₽</span></div>
+                <div class="item-row" onclick="sel('Leather Bag — 120 000 ₽', this)"><img src="sumka.webp" class="item-thumb" alt=""><b>Leather Bag</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">120k ₽</span></div>
+                <div class="item-row" onclick="sel('Armor v1 — 180 000 ₽', this)"><img src="moto1.webp" class="item-thumb" alt=""><b>Armor v1</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">180k ₽</span></div>
+                <div class="item-row" onclick="sel('Studio Shoes — 85 000 ₽', this)"><img src="tufli.webp" class="item-thumb" alt=""><b>Studio Shoes</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">85k ₽</span></div>
             </div>
             <div style="background:var(--gray); border-radius:30px; display:flex; align-items:center; justify-content:center; padding:40px; text-align:center; min-height:300px;">
                 <div>
@@ -263,16 +267,16 @@
         <span class="section-label">Palermo Origins</span>
         <div class="founders-grid">
             <div style="text-align:center;">
-                <div class="f-img-box"><img src="f1.jpeg" alt="Евсин Степан Витальевич" loading="lazy"></div>
+                <div class="f-img-box"><img src="f1.webp" alt="Евсин Степан Витальевич" loading="lazy" decoding="async"></div>
                 <p class="founder-name">Евсин Степан Витальевич</p>
             </div>
             <div style="text-align:center;">
-                <div class="f-img-box"><img src="f2.jpeg" alt="Ульянец Максим Владиславович" loading="lazy"></div>
+                <div class="f-img-box"><img src="f2.webp" alt="Ульянец Максим Владиславович" loading="lazy" decoding="async"></div>
                 <p class="founder-name">Ульянец Максим Владиславович</p>
             </div>
         </div>
         <p style="max-width:850px; margin:40px auto; font-size:clamp(15px,2.5vw,18px); line-height:2.2; text-align:center; font-weight:300;">Palermo Studio возникла на стыке холодной точности и дикой скорости.</p>
-        <div class="fob-showcase"><img src="fob.jpeg" alt="FOB" loading="lazy"></div>
+        <div class="fob-showcase"><img src="fob.webp" alt="FOB" loading="lazy" decoding="async"></div>
         <div style="font-size:clamp(14px,2.5vw,20px); letter-spacing:15px; text-transform:uppercase; text-align:center; margin:80px 0; font-weight:200; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:40px 0;">ENGINEERED SILENCE. BEYOND TECHNOLOGY.</div>
     </section>
 
@@ -280,7 +284,7 @@
     <section id="maxxmoto" class="reveal">
         <span class="section-label">The Partnership: MaxxMoto</span>
         <div class="partner-grid">
-            <div class="partner-img-box"><img src="maksim.jpeg" alt="MaxxMoto" loading="lazy"></div>
+            <div class="partner-img-box"><img src="maksim.webp" alt="MaxxMoto" loading="lazy" decoding="async"></div>
             <div class="partner-text">MaxxMoto — крупнейший сейлер мототехники, базирующийся в Йошкар-Оле. Обладая объемами поставок, исчисляемыми миллионами рублей, компания стала ключевым партнером Palermo Studio. Этот раздел посвящен синергии инженерного мастерства и высоких продаж, которые лежат в основе нашего общего успеха.</div>
         </div>
     </section>

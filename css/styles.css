@@ -59,6 +59,15 @@ header {
     opacity: 0;
 }
 #mobile-nav.open { transform: translateY(0); opacity: 1; }
+.burger-close {
+    position: absolute; top: 24px; right: 24px;
+    background: none; border: 1px solid var(--border); color: var(--text);
+    width: 40px; height: 40px; border-radius: 50%;
+    font-size: 16px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    transition: 0.3s; z-index: 2;
+}
+.burger-close:hover { background: var(--text); color: var(--bg); }
 #mobile-nav a, #mobile-nav .mnav-btn {
     text-decoration: none; color: var(--text); font-size: 14px;
     font-weight: 700; text-transform: uppercase; letter-spacing: 4px;

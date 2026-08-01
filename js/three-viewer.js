@@ -66,7 +66,7 @@ const ring = new THREE.Mesh(
 ring.rotation.x = Math.PI / 2;
 mainGroup.add(ring);
 
-const textures = ['jacket.jpeg', 'moto1.jpeg', 'glovo.jpeg', 'tufli.jpeg'];
+const textures = ['jacket.webp', 'moto1.webp', 'glovo.webp', 'tufli.webp'];
 const cards = [];
 const loader = new THREE.TextureLoader();
 
