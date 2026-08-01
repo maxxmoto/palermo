@@ -31,6 +31,11 @@ header {
     border-bottom: 1px solid var(--border);
 }
 .logo-img { height: 28px; width: auto; display: block; }
+.logo-top { font-size: 18px; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; }
+.logo-l { color: #008C45; }
+.logo-e { color: #FFFFFF; -webkit-text-stroke: 1.5px #000; paint-order: stroke fill; }
+.logo-r { color: #CD212A; }
+body.night-mode .logo-e { -webkit-text-stroke: 1.5px #fff; }
 .hero-logo { height: clamp(60px, 12vw, 140px); width: auto; display: block; margin: 0 auto 20px; }
 .footer-logo { height: 24px; width: auto; display: block; margin-bottom: 16px; opacity: 0.8; }
 .nav-top { display: flex; gap: 8px; align-items: center; }
