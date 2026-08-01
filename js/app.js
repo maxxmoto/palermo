@@ -1,0 +1,304 @@
+// ── BURGER ──
+window.toggleBurger = function () {
+    document.getElementById('burger').classList.toggle('active');
+    document.getElementById('mobile-nav').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+};
+window.closeBurger = function () {
+    document.getElementById('burger').classList.remove('active');
+    document.getElementById('mobile-nav').classList.remove('open');
+    document.getElementById('overlay').classList.remove('active');
+};
+
+// ── CART ──
+var cart = [];
+
+window.buy = function (n, p) {
+    cart.push({ n: n, p: p });
+    updateCart();
+    toast(n + ' \u2014 added');
+};
+
+window.toggleCart = function () {
+    closeBurger();
+    document.getElementById('side-cart').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+};
+
+window.toggleAuth = function () {
+    closeBurger();
+    document.getElementById('auth-modal').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+};
+
+window.toggleSpecs = function () {
+    closeBurger();
+    document.getElementById('spec-modal').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+};
+
+window.toggleNight = function () {
+    document.body.classList.toggle('night-mode');
+};
+
+window.closeAll = function () {
+    closeBurger();
+    ['side-cart', 'auth-modal', 'spec-modal'].forEach(function (id) {
+        document.getElementById(id).classList.remove('open');
+    });
+    document.getElementById('overlay').classList.remove('active');
+};
+
+window.login = function () {
+    var email = document.getElementById('login-field').value.trim();
+    if (!email) { toast('Enter email'); return; }
+    var name = email.indexOf('stepan') !== -1 ? 'Evsin Stepan' : email.split('@')[0];
+    document.getElementById('id-label').innerText = name;
+    document.getElementById('club-lock').classList.add('unlocked');
+    var inner = document.getElementById('club-inner');
+    inner.style.opacity = '1';
+    inner.style.filter = 'blur(0)';
+    toast('Welcome, ' + name);
+    toggleAuth();
+};
+
+function updateCart() {
+    var total = cart.reduce(function (s, i) { return s + i.p; }, 0);
+    document.getElementById('cart-q').innerText = cart.length;
+    document.getElementById('cart-total').innerText = total.toLocaleString() + ' \u20BD';
+    var list = document.getElementById('cart-list');
+    if (cart.length === 0) {
+        list.innerHTML = '<p style="opacity:0.3; font-size:12px; text-align:center; margin-top:100px;">Empty</p>';
+    } else {
+        list.innerHTML = cart.map(function (i, idx) {
+            return '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px; padding:10px; border:1px solid var(--border); border-radius:10px;"><span>' + i.n + '</span><span style="display:flex; align-items:center; gap:10px;">' + i.p.toLocaleString() + ' \u20BD <span style="cursor:pointer; opacity:0.3; font-size:14px;" onclick="removeItem(' + idx + ')">&times;</span></span></div>';
+        }).join('');
+    }
+}
+
+window.removeItem = function (idx) {
+    cart.splice(idx, 1);
+    updateCart();
+    toast('Removed');
+};
+
+window.checkout = function () {
+    if (cart.length === 0) { toast('Bag is empty'); return; }
+    toast('Order placed. Confirmation sent.');
+    cart = [];
+    updateCart();
+    toggleCart();
+};
+
+window.toast = function (m) {
+    var t = document.getElementById('toast');
+    t.innerText = m;
+    t.classList.add('show');
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(function () { t.classList.remove('show'); }, 2500);
+};
+
+window.selectSize = function (el) {
+    var btns = el.parentElement.querySelectorAll('.size-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+    el.classList.add('active');
+};
+
+// ── ENZO ──
+var isMax = false;
+
+window.enzoLog = function (msg) {
+    var log = document.getElementById('enzo-log');
+    var time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    log.innerHTML += '<div class="line"><span class="ts">[' + time + ']</span> ' + msg + '</div>';
+    log.scrollTop = log.scrollHeight;
+};
+
+window.loadMax = function () {
+    document.getElementById('v-port').src = 'max1.jpeg';
+    isMax = true;
+    enzoLog('\u041f\u0440\u043e\u0442\u043e\u0442\u0438\u043f \u0437\u0430\u0433\u0440\u0443\u0436\u0435\u043d.');
+    toast('Photo Loaded');
+};
+
+window.changeLight = function (mode) {
+    if (!isMax) { toast('\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u0435 \u0444\u043e\u0442\u043e'); return; }
+    var l = document.getElementById('ai-loader');
+    var img = document.getElementById('v-port');
+    l.style.display = 'block';
+    img.style.opacity = '0.2';
+    enzoLog('\u0421\u043a\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0432 ' + (mode === 'night' ? '\u043d\u043e\u0447\u043d\u043e\u043c' : '\u0434\u043d\u0435\u0432\u043d\u043e\u043c') + ' \u0441\u043f\u0435\u043a\u0442\u0440\u0435...');
+    setTimeout(function () {
+        img.src = (mode === 'night') ? 'max2.jpeg' : 'max1.jpeg';
+        img.style.opacity = '0.9';
+        l.style.display = 'none';
+        enzoLog('\u0421\u043a\u0430\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e.');
+    }, 2500);
+};
+
+window.enzoDeepAnalysis = function () {
+    enzoLog('\ud83e\udde0 \u0417\u0430\u043f\u0443\u0441\u043a Deep AI...');
+    var weatherEl = document.getElementById('w-temp');
+    var tempText = weatherEl ? weatherEl.innerText : '\u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e';
+    var cartItems = cart.map(function (i) { return i.n; }).join(', ') || '\u043d\u0438\u0447\u0435\u0433\u043e';
+    var prompt = '<s>[INST] \u0422\u044b \u2014 ENZO, \u0418\u0418-\u0441\u0442\u0438\u043b\u0438\u0441\u0442 Palermo Studio (\u0419\u043e\u0448\u043a\u0430\u0440-\u041e\u043b\u0430). \u0422\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0430: ' + tempText + '. \u0412 \u043a\u043e\u0440\u0437\u0438\u043d\u0435: ' + cartItems + '. \u0414\u0430\u0439 \u043a\u043e\u0440\u043e\u0442\u043a\u0438\u0439 (2-3 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f) \u0441\u0442\u0438\u043b\u044c\u043d\u044b\u0439 \u0441\u043e\u0432\u0435\u0442 \u043f\u043e \u044d\u043a\u0438\u043f\u0438\u0440\u043e\u0432\u043a\u0435 \u0434\u043b\u044f \u043c\u043e\u0442\u043e\u0446\u0438\u043a\u043b\u0438\u0441\u0442\u0430. \u0420\u0443\u0441\u0441\u043a\u0438\u0439, \u0443\u0432\u0435\u0440\u0435\u043d\u043d\u043e, \u0431\u0435\u0437 \u043c\u0430\u0440\u043a\u0434\u0430\u0443\u043d\u0430. [/INST]';
+
+    enzoLog('\u26a0\ufe0f AI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d. \u041b\u043e\u043a\u0430\u043b\u044c\u043d\u044b\u0439 \u0430\u043d\u0430\u043b\u0438\u0437:');
+    var temp = parseInt(tempText);
+    var advice = !isNaN(temp)
+        ? (temp < 0 ? '\u041c\u043e\u0440\u043e\u0437 \u2014 Aero Jacket + Electric Cyan.' : temp < 10 ? '\u041f\u0440\u043e\u0445\u043b\u0430\u0434\u043d\u043e \u2014 Armor v1 + Glovo Gloves.' : temp < 20 ? '\u041a\u043e\u043c\u0444\u043e\u0440\u0442 \u2014 Studio Shirt + Leather Bag.' : '\u0422\u0435\u043f\u043b\u043e \u2014 \u043e\u0431\u043b\u0435\u0433\u0447\u0451\u043d\u043d\u044b\u0439 \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442.')
+        : 'Armor v2 \u2014 \u0443\u043d\u0438\u0432\u0435\u0440\u0441\u0430\u043b\u044c\u043d\u043e\u0435 \u0440\u0435\u0448\u0435\u043d\u0438\u0435.';
+    enzoLog('\u2705 ' + advice);
+};
+
+// ── LOOK BUILDER ──
+var sItems = [];
+
+window.sel = function (name, el) {
+    el.classList.toggle('selected');
+    var idx = sItems.indexOf(name);
+    if (idx !== -1) {
+        sItems.splice(idx, 1);
+    } else {
+        sItems.push(name);
+    }
+    var msg = document.getElementById('l-msg');
+    var total = document.getElementById('l-total');
+    if (sItems.length > 0) {
+        msg.innerHTML = '<b>ENZO:</b> \u0410\u043d\u0430\u043b\u0438\u0437 \u0441\u043e\u0447\u0435\u0442\u0430\u043d\u0438\u044f...';
+        msg.style.opacity = '1';
+        total.style.display = 'block';
+        var sum = sItems.reduce(function (acc, i) {
+            var digits = i.match(/\d+/g);
+            return acc + parseInt(digits[digits.length - 1]);
+        }, 0);
+        total.innerText = '\u2248 ' + sum.toLocaleString() + ' \u20BD';
+    } else {
+        msg.innerHTML = '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u044b...';
+        msg.style.opacity = '0.5';
+        total.style.display = 'none';
+    }
+};
+
+// ── WEATHER (WeatherAPI.com) ──
+function fetchWeather() {
+    var WAPI_KEY = '0426384116734bb4a94183926263007';
+    fetch('https://api.weatherapi.com/v1/current.json?key=' + WAPI_KEY + '&q=Yoshkar-Ola&lang=ru&aqi=no')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.error) throw new Error(data.error.message);
+            var c = data.current;
+            var temp = Math.round(c.temp_c);
+            var feels = Math.round(c.feelslike_c);
+            var humidity = c.humidity;
+            var wind = Math.round(c.wind_kph / 3.6);
+            var uv = c.uv;
+            var label = c.condition.text;
+            document.getElementById('w-icon').innerHTML = '<img src="https:' + c.condition.icon + '" alt="' + label + '" style="width:70px;height:70px;">';
+            document.getElementById('w-temp').innerHTML = (temp > 0 ? '+' : '') + temp + '\u00b0C';
+            document.getElementById('w-details').innerHTML = label + ' \u00b7 \u041e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + (feels > 0 ? '+' : '') + feels + '\u00b0C \u00b7 \u0412\u043b\u0430\u0436\u043d\u043e\u0441\u0442\u044c ' + humidity + '% \u00b7 \u0412\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441 \u00b7 UV ' + uv;
+            var advice = '';
+            if (temp <= -10) advice = '\u042d\u043a\u0441\u0442\u0440\u0435\u043c\u0430\u043b\u044c\u043d\u044b\u0439 \u0445\u043e\u043b\u043e\u0434. Aero Jacket + Armor v2.';
+            else if (temp <= 0) advice = '\u041c\u043e\u0440\u043e\u0437\u043d\u043e. Aero Jacket + Glovo Gloves.';
+            else if (temp <= 10) advice = '\u041f\u0440\u043e\u0445\u043b\u0430\u0434\u043d\u043e. Armor v1.';
+            else if (temp <= 20) advice = '\u041a\u043e\u043c\u0444\u043e\u0440\u0442. Studio Shirt + Leather Bag.';
+            else if (temp <= 30) advice = '\u0422\u0435\u043f\u043b\u043e. \u041e\u0431\u043b\u0435\u0433\u0447\u0451\u043d\u043d\u044b\u0439 \u0441\u0438\u043b\u0443\u044d\u0442.';
+            else advice = '\u0416\u0430\u0440\u043a\u043e. \u041c\u0438\u043d\u0438\u043c\u0443\u043c \u0441\u043b\u043e\u0451\u0432.';
+            if (label.toLowerCase().indexOf('\u0434\u043e\u0436\u0434') !== -1 || label.toLowerCase().indexOf('\u043b\u0438\u0432\u0435\u043d\u044c') !== -1) advice += ' \u041e\u0441\u0430\u0434\u043a\u0438 \u2014 \u0432\u043e\u0434\u043e\u043e\u0442\u0442\u0430\u043b\u043a\u0438\u0432\u0430\u044e\u0449\u0430\u044f \u043f\u0440\u043e\u043f\u0438\u0442\u043a\u0430.';
+            if (wind >= 10) advice += ' \u0412\u0435\u0442\u0435\u0440 \u2014 \u0430\u044d\u0440\u043e\u0434\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u043a\u0440\u0438\u0442\u0438\u0447\u043d\u0430.';
+            if (uv >= 6) advice += ' UV \u0432\u044b\u0441\u043e\u043a\u0438\u0439 \u2014 \u0437\u0430\u0449\u0438\u0442\u0430.';
+            document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> ' + advice;
+            enzoLog('\u041f\u043e\u0433\u043e\u0434\u0430: ' + label + ', ' + temp + '\u00b0C (\u043e\u0449\u0443\u0449\u0430\u0435\u0442\u0441\u044f ' + feels + '\u00b0C), \u0432\u0435\u0442\u0435\u0440 ' + wind + ' \u043c/\u0441.');
+        })
+        .catch(function () {
+            document.getElementById('w-details').innerText = 'WeatherAPI \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.';
+            document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> \u0421\u0435\u043d\u0441\u043e\u0440\u044b \u043e\u0442\u043a\u043b\u044e\u0447\u0435\u043d\u044b.';
+        });
+}
+
+// ── LEAFLET RUSSIA MAP ──
+function initMap() {
+    var mapEl = document.getElementById('russia-map');
+    if (!mapEl) return;
+    var isNight = document.body.classList.contains('night-mode');
+    var map = L.map('russia-map', { zoomControl: true, scrollWheelZoom: true }).setView([56.5, 52], 4);
+    L.tileLayer(isNight
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OSM',
+        maxZoom: 12
+    }).addTo(map);
+
+    var cities = [
+        { name: '\u041c\u043e\u0441\u043a\u0432\u0430', lat: 55.75, lng: 37.62, hq: false },
+        { name: '\u0421\u0430\u043d\u043a\u0442-\u041f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433', lat: 59.93, lng: 30.34, hq: false },
+        { name: '\u041d\u0438\u0436\u043d\u0438\u0439 \u041d\u043e\u0432\u0433\u043e\u0440\u043e\u0434', lat: 56.33, lng: 44.00, hq: false },
+        { name: '\u041a\u0430\u0437\u0430\u043d\u044c', lat: 55.79, lng: 49.12, hq: false },
+        { name: '\u0421\u0430\u043c\u0430\u0440\u0430', lat: 53.20, lng: 50.15, hq: false },
+        { name: '\u0412\u043e\u0440\u043e\u043d\u0435\u0436', lat: 51.67, lng: 39.18, hq: false },
+        { name: '\u0420\u043e\u0441\u0442\u043e\u0432-\u043d\u0430-\u0414\u043e\u043d\u0443', lat: 47.23, lng: 39.72, hq: false },
+        { name: '\u041a\u0440\u0430\u0441\u043d\u043e\u0434\u0430\u0440', lat: 45.04, lng: 38.98, hq: false },
+        { name: '\u0412\u043e\u043b\u0433\u043e\u0433\u0440\u0430\u0434', lat: 48.71, lng: 44.51, hq: false },
+        { name: '\u0423\u0444\u0430', lat: 54.74, lng: 55.97, hq: false },
+        { name: '\u041f\u0435\u0440\u043c\u044c', lat: 58.01, lng: 56.25, hq: false },
+        { name: '\u0427\u0435\u043b\u044f\u0431\u0438\u043d\u0441\u043a', lat: 55.16, lng: 61.44, hq: false },
+        { name: '\u0419\u043e\u0448\u043a\u0430\u0440-\u041e\u043b\u0430 \u2605 HQ', lat: 56.63, lng: 47.89, hq: true },
+        { name: '\u0422\u0443\u043b\u0430', lat: 54.20, lng: 37.62, hq: false },
+        { name: '\u042f\u0440\u043e\u0441\u043b\u0430\u0432\u043b\u044c', lat: 57.63, lng: 39.87, hq: false },
+        { name: '\u0420\u044f\u0437\u0430\u043d\u044c', lat: 54.63, lng: 39.69, hq: false },
+        { name: '\u0422\u0432\u0435\u0440\u044c', lat: 56.86, lng: 35.92, hq: false },
+        { name: '\u041a\u0430\u043b\u0443\u0433\u0430', lat: 54.53, lng: 36.28, hq: false },
+        { name: '\u0412\u043b\u0430\u0434\u0438\u043c\u0438\u0440', lat: 56.14, lng: 40.40, hq: false },
+        { name: '\u0421\u043e\u0447\u0438', lat: 43.59, lng: 39.73, hq: false },
+        // Italy
+        { name: 'Palermo, Italia', lat: 38.12, lng: 13.36, hq: false },
+        { name: 'Catania, Italia', lat: 37.50, lng: 15.09, hq: false },
+    ];
+
+    cities.forEach(function (c) {
+        var color = c.hq ? 'var(--electric-cyan)' : 'var(--beige)';
+        var size = c.hq ? 16 : 12;
+        var icon = L.divIcon({
+            className: 'palermo-marker',
+            html: '<div style="width:' + size + 'px;height:' + size + 'px;background:' + color + ';border:2px solid var(--text);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 ' + (c.hq ? 12 : 6) + 'px ' + color + ';"></div>',
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2]
+        });
+        L.marker([c.lat, c.lng], { icon: icon })
+            .addTo(map)
+            .bindPopup('<b>' + c.name + '</b><br><span style="font-size:10px;opacity:0.6;">Palermo Hub</span>');
+    });
+}
+
+// Reload map on theme change
+var _origToggleNight = window.toggleNight;
+window.toggleNight = function () {
+    _origToggleNight();
+    setTimeout(function () {
+        var mapEl = document.getElementById('russia-map');
+        if (mapEl && mapEl._leaflet_id) {
+            mapEl._leaflet_map.remove();
+            delete mapEl._leaflet_id;
+            delete mapEl._leaflet_map;
+        }
+        initMap();
+    }, 100);
+};
+
+// ── INIT ──
+setTimeout(function () {
+    enzoLog('ENZO v3.2 \u0438\u043d\u0438\u0446\u0438\u0430\u043b\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u043d.');
+    enzoLog('\u0421\u0435\u043d\u0441\u043e\u0440\u044b: WeatherAPI.com.');
+}, 300);
+
+fetchWeather();
+initMap();
+
+// Scroll reveal
+var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(function (el) { observer.observe(el); });
+
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+window.onload = function () { window.scrollTo(0, 0); };

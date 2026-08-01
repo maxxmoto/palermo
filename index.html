@@ -10,258 +10,12 @@
     <meta property="og:type" content="website">
     <title>PALERMO STUDIO | OS 2026</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="importmap">
         { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
     </script>
-    <style>
-        :root {
-            --bg: #ffffff; --text: #000000; --border: #e8e8e8;
-            --gray: #f9f9f9; --beige: #D2B48C; --electric-cyan: #00f2ff;
-            --specs-bg: #f4f1ec; --header-bg: rgba(255,255,255,0.85);
-        }
-        body.night-mode {
-            --bg: #0d0d0d; --text: #ffffff; --border: #222;
-            --gray: #151515; --specs-bg: #1a1815; --header-bg: rgba(13,13,13,0.85);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background: var(--bg); color: var(--text);
-            transition: background 0.5s, color 0.5s;
-            overflow-x: hidden;
-        }
-
-        .grain {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999; opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        }
-
-        /* ── HEADER ── */
-        header {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 18px 5%; display: flex; justify-content: space-between; align-items: center;
-            background: var(--header-bg); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-        .logo-top { font-size: 18px; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; }
-        .nav-top { display: flex; gap: 8px; align-items: center; }
-        .btn-mode {
-            cursor: pointer; font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
-            border: 1px solid var(--text); padding: 7px 14px; border-radius: 30px;
-            transition: 0.3s; background: none; color: var(--text); font-weight: bold;
-            white-space: nowrap; user-select: none;
-        }
-        .btn-mode:hover { background: var(--text); color: var(--bg); }
-
-        /* ── BURGER ── */
-        .burger {
-            display: none; flex-direction: column; gap: 5px; cursor: pointer;
-            z-index: 10002; padding: 5px; background: none; border: none;
-        }
-        .burger span {
-            width: 24px; height: 2px; background: var(--text);
-            transition: 0.3s; display: block; border-radius: 2px;
-        }
-        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-        .burger.active span:nth-child(2) { opacity: 0; }
-        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-
-        /* ── MOBILE NAV ── */
-        #mobile-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 10001;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; gap: 28px;
-            transform: translateY(-100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            opacity: 0;
-        }
-        #mobile-nav.open { transform: translateY(0); opacity: 1; }
-        #mobile-nav a, #mobile-nav .mnav-btn {
-            text-decoration: none; color: var(--text); font-size: 14px;
-            font-weight: 700; text-transform: uppercase; letter-spacing: 4px;
-            cursor: pointer; background: none; border: none; font-family: inherit;
-        }
-
-        /* ── SIDEBARS ── */
-        #side-cart, #auth-modal, #spec-modal {
-            position: fixed; right: -450px; top: 0; width: 450px; max-width: 100vw;
-            height: 100%; background: var(--bg); z-index: 10003;
-            border-left: 1px solid var(--border); padding: 40px 30px;
-            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: -20px 0 50px rgba(0,0,0,0.15); overflow-y: auto;
-        }
-        #side-cart.open, #auth-modal.open, #spec-modal.open { right: 0; }
-        .close-trigger {
-            cursor: pointer; opacity: 0.4; font-size: 10px; letter-spacing: 2px;
-            margin-bottom: 30px; display: inline-block; transition: opacity 0.3s;
-        }
-        .close-trigger:hover { opacity: 0.8; }
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); z-index: 10002; display: none;
-        }
-        .overlay.active { display: block; }
-
-        /* ── HERO ── */
-        .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .hero-title-wrap { position: relative; padding-bottom: 25px; margin-bottom: 20px; }
-        .hero-title { font-size: clamp(50px, 15vw, 150px); font-weight: 100; letter-spacing: 35px; text-transform: uppercase; transform: translateX(17px); }
-        .hero-underline { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--text); opacity: 0.15; transform: scaleX(0.7); }
-        .hero-nav { display: flex; gap: 20px; list-style: none; margin-top: 50px; flex-wrap: wrap; justify-content: center; }
-        .hero-nav a { text-decoration: none; color: var(--text); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; transition: opacity 0.3s; }
-        .hero-nav a:hover { opacity: 0.5; }
-
-        /* ── SECTIONS ── */
-        section { padding: 100px 5%; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 10px; letter-spacing: 10px; text-transform: uppercase; text-align: center; display: block; margin-bottom: 60px; opacity: 0.5; font-weight: bold; }
-
-        /* ── CATALOG ── */
-        .catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .card { text-align: center; }
-        .img-wrap { width: 100%; aspect-ratio: 3/4; border-radius: 30px; border: 1px solid var(--border); background: var(--gray); overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
-        .gear-img { max-width: 85%; max-height: 85%; object-fit: contain; transition: transform 0.6s cubic-bezier(0.15, 0, 0.15, 1); }
-        .card:hover .gear-img { transform: scale(1.08); }
-        .price-tag { font-size: 11px; letter-spacing: 2px; margin: 15px 0; font-weight: bold; opacity: 0.6; }
-        .size-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
-        .size-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: none; color: var(--text); font-size: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .size-btn:hover, .size-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-
-        /* ── BUILDER ── */
-        .builder-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
-        .item-row { display: flex; align-items: center; gap: 20px; padding: 20px; border: 1px solid var(--border); border-radius: 20px; cursor: pointer; transition: 0.3s; margin-bottom: 12px; background: var(--bg); color: var(--text); }
-        .item-row:hover { border-color: var(--beige); }
-        .item-row.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
-        .item-thumb { width: 55px; height: 55px; border-radius: 10px; object-fit: contain; background: #fff; padding: 4px; }
-
-        /* ── CLUB ── */
-        #club-section { background: var(--gray); text-align: center; position: relative; min-height: 350px; border-radius: 60px; margin: 0 5%; }
-        .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--gray); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: opacity 0.8s, transform 0.8s; border-radius: 60px; }
-        .lock-overlay.unlocked { opacity: 0; pointer-events: none; transform: translateY(-30px); }
-        .tech-lock { width: 50px; height: 50px; border: 2px solid var(--text); border-radius: 50%; margin-bottom: 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(128,128,128,0.2); } 100% { box-shadow: 0 0 0 25px rgba(128,128,128,0); } }
-
-        /* ── ORIGINS ── */
-        .founders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px; align-items: start; }
-        .f-img-box { width: 100%; aspect-ratio: 3/4; background: var(--gray); border-radius: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); }
-        .f-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); transition: filter 1s; }
-        .f-img-box:hover img { filter: grayscale(0); }
-        .founder-name { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; font-weight: bold; text-align: center; }
-        .fob-showcase { width: 100%; aspect-ratio: 16/9; max-height: 600px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); background: var(--gray); display: flex; align-items: center; justify-content: center; }
-        .fob-showcase img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 1.5s; }
-        .fob-showcase:hover img { filter: grayscale(0); }
-
-        /* ── ENZO LAB ── */
-        .lab-box { background: var(--gray); border-radius: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; padding: 50px; align-items: start; }
-        .mirror { aspect-ratio: 3/4; max-height: 600px; border-radius: 30px; background: #000; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
-        .mirror img { max-width: 100%; max-height: 100%; object-fit: contain; opacity: 0.9; transition: opacity 0.8s; }
-        .scan-line { width: 100%; height: 2px; background: var(--electric-cyan); position: absolute; top: 0; left: 0; animation: scanAnim 4s infinite linear; opacity: 0.4; z-index: 25; box-shadow: 0 0 15px var(--electric-cyan); }
-        @keyframes scanAnim { 0%, 100% { top: 0; } 50% { top: 100%; } }
-        #ai-loader { display: none; position: absolute; width: 50px; height: 50px; border: 3px solid rgba(210, 180, 140, 0.1); border-top: 3px solid var(--beige); border-radius: 50%; animation: spin 1s infinite; z-index: 30; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .enzo-panel { display: flex; flex-direction: column; gap: 16px; }
-        .enzo-log { background: #000; border-radius: 16px; padding: 20px; min-height: 180px; font-family: "Courier New", monospace; font-size: 12px; line-height: 1.9; color: var(--electric-cyan); border: 1px solid #1a3a4a; overflow-y: auto; max-height: 300px; }
-        .enzo-log .ts { opacity: 0.4; font-size: 10px; }
-        .enzo-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .btn-enzo { padding: 10px 16px; border-radius: 10px; font-size: 10px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; background: var(--text); color: var(--bg); border: none; transition: opacity 0.3s; white-space: nowrap; }
-        .btn-enzo:hover { opacity: 0.7; }
-        .btn-enzo.outline { background: none; border: 1px dashed var(--text); color: var(--text); }
-
-        /* ── 3D VIEWER ── */
-        #viewer3d { width: 100%; aspect-ratio: 16/9; max-height: 650px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); background: #000; cursor: grab; position: relative; }
-        #viewer3d:active { cursor: grabbing; }
-        #viewer3d canvas { display: block; }
-        .viewer-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.3); pointer-events: none; z-index: 5; }
-        .viewer-nav { display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-        .viewer-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--text); cursor: pointer; transition: 0.3s; opacity: 0.4; }
-        .viewer-dot.active { background: var(--text); opacity: 1; }
-
-        /* ── LEAFLET MAP ── */
-        #russia-map { width: 100%; height: 550px; border-radius: 30px; overflow: hidden; border: 1px solid var(--border); z-index: 1; }
-        #russia-map .leaflet-control-zoom a { color: var(--text) !important; }
-
-        /* ── FAQ ── */
-        .faq-item { border-bottom: 1px solid var(--border); padding: 30px 0; cursor: pointer; }
-        .faq-item:hover .faq-q { opacity: 0.7; }
-        .faq-q { display: flex; justify-content: space-between; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; font-size: 12px; }
-        .faq-a { font-size: 13px; line-height: 1.8; opacity: 0; max-height: 0; overflow: hidden; transition: 0.4s; }
-        .faq-item.active .faq-a { opacity: 0.5; max-height: 300px; padding-top: 20px; }
-
-        /* ── TOAST ── */
-        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 16px 36px; border-radius: 100px; font-size: 11px; letter-spacing: 1px; z-index: 20000; transition: bottom 0.5s cubic-bezier(0.16, 1, 0.3, 1); white-space: nowrap; font-weight: bold; }
-        #toast.show { bottom: 40px; }
-
-        /* ── REVEAL ── */
-        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s, transform 0.8s; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-
-        /* ── BUTTONS ── */
-        .btn-lux { width: 100%; padding: 18px; background: var(--text); color: var(--bg); border: none; border-radius: 16px; font-size: 10px; font-weight: bold; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; transition: opacity 0.3s, transform 0.2s; }
-        .btn-lux:hover { opacity: 0.8; transform: scale(0.98); }
-
-        input[type="text"], input[type="email"] { width: 100%; padding: 16px; margin: 16px 0; border-radius: 12px; border: 1px solid var(--border); background: var(--gray); color: var(--text); font-family: inherit; font-size: 13px; outline: none; transition: border 0.3s; }
-        input:focus { border-color: var(--beige); }
-        .newsletter-box { max-width: 500px; margin: 60px auto 0; text-align: center; }
-
-        .partner-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
-        .partner-img-box { aspect-ratio: 3/4; max-height: 550px; border-radius: 30px; border: 1px solid var(--border); overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; }
-        .partner-img-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 1s; }
-        .partner-img-box:hover img { filter: grayscale(0); }
-        .partner-text { font-size: 18px; line-height: 1.8; font-weight: 300; border-left: 3px solid var(--text); padding-left: 35px; }
-
-        .weather-dash { display: flex; align-items: center; gap: 50px; justify-content: center; flex-wrap: wrap; padding: 30px; background: var(--gray); border-radius: 30px; max-width: 900px; margin: 0 auto; }
-        .weather-icon { font-size: 70px; }
-        .weather-temp { font-size: 72px; font-weight: 100; line-height: 1; color: var(--electric-cyan); text-shadow: 0 0 30px rgba(0,242,255,0.3); }
-        .weather-details { font-size: 13px; line-height: 2; opacity: 0.7; }
-        .weather-advice { max-width: 380px; font-size: 14px; line-height: 1.8; border-left: 2px solid var(--text); padding-left: 25px; }
-
-        /* ── DESKTOP NAV HIDE ON MOBILE ── */
-        @media (max-width: 768px) {
-            .nav-top .btn-mode { display: none; }
-            .nav-top .btn-mode.desktop-only { display: none; }
-            .burger { display: flex; }
-            header { padding: 15px 4%; }
-            .logo-top { font-size: 14px; letter-spacing: 6px; }
-            .hero-title { font-size: clamp(40px, 12vw, 80px); letter-spacing: 15px; transform: translateX(8px); }
-            .hero-nav { gap: 12px; }
-            .hero-nav a { font-size: 8px; letter-spacing: 1px; }
-            section { padding: 60px 4%; }
-            .catalog { grid-template-columns: 1fr 1fr; gap: 15px; }
-            .builder-container { grid-template-columns: 1fr; }
-            .founders-grid { grid-template-columns: 1fr; gap: 30px; }
-            .lab-box { grid-template-columns: 1fr; gap: 30px; padding: 25px; border-radius: 30px; }
-            .mirror { aspect-ratio: 1/1; max-height: 400px; }
-            #side-cart, #auth-modal, #spec-modal { width: 100%; right: -100%; padding: 30px 20px; }
-            #club-section { border-radius: 30px; margin: 0 3%; }
-            .newsletter-box { margin-top: 40px; }
-            .partner-grid { grid-template-columns: 1fr; gap: 30px; }
-            .partner-img-box { max-height: 400px; }
-            .partner-text { font-size: 15px; padding-left: 20px; }
-            .weather-dash { flex-direction: column; gap: 25px; text-align: center; }
-            .weather-advice { border-left: none; border-top: 2px solid var(--text); padding: 20px 0 0; max-width: 100%; }
-            .weather-temp { font-size: 52px; }
-            .enzo-log { max-height: 200px; }
-            #viewer3d { aspect-ratio: 1/1; max-height: 400px; }
-            #russia-map { height: 350px; border-radius: 20px; }
-            .section-label { letter-spacing: 6px; margin-bottom: 40px; }
-        }
-
-        @media (min-width: 769px) {
-            #mobile-nav { display: none; }
-        }
-
-        @media (max-width: 480px) {
-            .catalog { grid-template-columns: 1fr; }
-            .btn-enzo { font-size: 8px; padding: 8px 12px; letter-spacing: 1px; }
-            .enzo-actions { gap: 6px; }
-            .img-wrap { border-radius: 20px; }
-            .card .btn-lux { padding: 14px; font-size: 9px; letter-spacing: 2px; }
-        }
-    </style>
 </head>
 <body id="body">
     <div class="grain" aria-hidden="true"></div>
@@ -280,7 +34,6 @@
         </button>
     </header>
 
-    <!-- MOBILE NAV -->
     <nav id="mobile-nav">
         <a href="#collab" onclick="closeBurger()">Collab</a>
         <a href="#mainline" onclick="closeBurger()">Essentials</a>
@@ -297,7 +50,6 @@
         <button class="mnav-btn" onclick="toggleCart();closeBurger()">Bag</button>
     </nav>
 
-    <!-- SPECS MODAL -->
     <div id="spec-modal">
         <span class="close-trigger" onclick="toggleSpecs()">← BACK</span>
         <h2 style="font-size:18px; letter-spacing:4px; text-transform:uppercase; margin-bottom:30px;">Tech Specs</h2>
@@ -311,7 +63,6 @@
         </div>
     </div>
 
-    <!-- AUTH MODAL -->
     <div id="auth-modal">
         <span class="close-trigger" onclick="toggleAuth()">← BACK</span>
         <h2 style="font-size:18px; letter-spacing:4px; text-transform:uppercase; margin-bottom:30px;">Identity</h2>
@@ -320,7 +71,6 @@
         <p style="font-size:10px; opacity:0.3; text-align:center; margin-top:15px;">Club members only</p>
     </div>
 
-    <!-- CART -->
     <div id="side-cart">
         <span class="close-trigger" onclick="toggleCart()">← CLOSE</span>
         <h2 style="font-size:18px; letter-spacing:4px; text-transform:uppercase; margin-bottom:30px;">Bag</h2>
@@ -333,7 +83,7 @@
         </div>
     </div>
 
-    <!-- 1. HERO -->
+    <!-- HERO -->
     <section class="hero reveal">
         <div class="hero-title-wrap">
             <h1 class="hero-title">PALERMO</h1>
@@ -351,74 +101,89 @@
         </ul>
     </section>
 
-    <!-- 2. COLLAB -->
+    <!-- COLLAB -->
     <section id="collab" class="reveal">
         <h2 style="font-family:'Arial Black'; font-style:italic; font-weight:900; font-size:clamp(22px,4vw,32px); text-transform:uppercase; text-align:center; margin-bottom:50px; background:linear-gradient(90deg, var(--text), #999); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Palermo × MaxxMoto</h2>
         <div class="catalog">
             <div class="card">
                 <div class="img-wrap"><img src="jacket.jpeg" class="gear-img" alt="Aero Jacket" loading="lazy"></div>
-                <div class="price-tag">145 000 ₽</div>
-                <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                <div class="card-body">
+                    <div class="price-tag">145 000 ₽</div>
+                    <div class="size-row">
+                        <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                    </div>
                 </div>
-                <button class="btn-lux" onclick="buy('Aero Jacket', 145000)">Add to bag</button>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Aero Jacket', 145000)">Add to bag</button></div>
             </div>
             <div class="card">
                 <div class="img-wrap"><img src="glovo.jpeg" class="gear-img" alt="Glovo Gloves" loading="lazy"></div>
-                <div class="price-tag">32 000 ₽</div>
-                <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                <div class="card-body">
+                    <div class="price-tag">32 000 ₽</div>
+                    <div class="size-row">
+                        <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                    </div>
                 </div>
-                <button class="btn-lux" onclick="buy('Glovo Gloves', 32000)">Add to bag</button>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Glovo Gloves', 32000)">Add to bag</button></div>
             </div>
             <div class="card">
                 <div class="img-wrap"><img src="moto1.jpeg" class="gear-img" alt="Armor v1" loading="lazy"></div>
-                <div class="price-tag">180 000 ₽</div>
-                <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                <div class="card-body">
+                    <div class="price-tag">180 000 ₽</div>
+                    <div class="size-row">
+                        <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                    </div>
                 </div>
-                <button class="btn-lux" onclick="buy('Armor v1', 180000)">Add to bag</button>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Armor v1', 180000)">Add to bag</button></div>
             </div>
             <div class="card">
                 <div class="img-wrap"><img src="moto2.jpeg" class="gear-img" alt="Armor v2" loading="lazy"></div>
-                <div class="price-tag">195 000 ₽</div>
-                <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                <div class="card-body">
+                    <div class="price-tag">195 000 ₽</div>
+                    <div class="size-row">
+                        <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                    </div>
                 </div>
-                <button class="btn-lux" onclick="buy('Armor v2', 195000)">Add to bag</button>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Armor v2', 195000)">Add to bag</button></div>
             </div>
         </div>
     </section>
 
-    <!-- 3. ESSENTIALS -->
+    <!-- ESSENTIALS -->
     <section id="mainline" class="reveal">
         <span class="section-label">Palermo Essentials</span>
         <div class="catalog">
             <div class="card">
                 <div class="img-wrap"><img src="shirt.jpeg" class="gear-img" alt="Studio Shirt" loading="lazy"></div>
-                <div class="price-tag">45 000 ₽</div>
-                <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                <div class="card-body">
+                    <div class="price-tag">45 000 ₽</div>
+                    <div class="size-row">
+                        <button class="size-btn" onclick="selectSize(this)">S</button><button class="size-btn" onclick="selectSize(this)">M</button><button class="size-btn" onclick="selectSize(this)">L</button><button class="size-btn" onclick="selectSize(this)">XL</button>
+                    </div>
                 </div>
-                <button class="btn-lux" onclick="buy('Studio Shirt', 45000)">Add to bag</button>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Studio Shirt', 45000)">Add to bag</button></div>
             </div>
             <div class="card">
                 <div class="img-wrap"><img src="sumka.jpeg" class="gear-img" alt="Leather Bag" loading="lazy"></div>
-                <div class="price-tag">120 000 ₽</div>
-                <button class="btn-lux" onclick="buy('Leather Bag', 120000)">Add to bag</button>
+                <div class="card-body">
+                    <div class="price-tag">120 000 ₽</div>
+                    <div class="size-row"></div>
+                </div>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Leather Bag', 120000)">Add to bag</button></div>
             </div>
             <div class="card">
                 <div class="img-wrap"><img src="tufli.jpeg" class="gear-img" alt="Studio Shoes" loading="lazy"></div>
-                <div class="price-tag">85 000 ₽</div>
-                <div class="size-row">
-                    <button class="size-btn" onclick="selectSize(this)">39</button><button class="size-btn" onclick="selectSize(this)">40</button><button class="size-btn" onclick="selectSize(this)">41</button><button class="size-btn" onclick="selectSize(this)">42</button><button class="size-btn" onclick="selectSize(this)">43</button>
+                <div class="card-body">
+                    <div class="price-tag">85 000 ₽</div>
+                    <div class="size-row">
+                        <button class="size-btn" onclick="selectSize(this)">39</button><button class="size-btn" onclick="selectSize(this)">40</button><button class="size-btn" onclick="selectSize(this)">41</button><button class="size-btn" onclick="selectSize(this)">42</button><button class="size-btn" onclick="selectSize(this)">43</button>
+                    </div>
                 </div>
-                <button class="btn-lux" onclick="buy('Studio Shoes', 85000)">Add to bag</button>
+                <div class="card-actions"><button class="btn-lux" onclick="buy('Studio Shoes', 85000)">Add to bag</button></div>
             </div>
         </div>
     </section>
 
-    <!-- 4. ENZO LAB -->
+    <!-- ENZO LAB -->
     <section id="lab" class="reveal">
         <span class="section-label">ENZO Neural Lab</span>
         <div class="lab-box">
@@ -438,21 +203,20 @@
                     <button class="btn-enzo" onclick="changeLight('night')">🌙 Ночь</button>
                     <button class="btn-enzo outline" onclick="enzoDeepAnalysis()">🧠 Deep AI</button>
                 </div>
-                <input type="text" id="hf-token" placeholder="HuggingFace API token" style="margin:8px 0 0; padding:10px 14px; font-size:10px; border-radius:8px; font-family:monospace;">
-                <p style="font-size:10px; opacity:0.3; margin-top:4px;">ENZO v3.2 — WeatherAPI.com + HuggingFace AI</p>
+                <p style="font-size:10px; opacity:0.3; margin-top:4px;">ENZO v3.2 — WeatherAPI.com</p>
             </div>
         </div>
     </section>
 
-    <!-- 5. LOOK BUILDER -->
+    <!-- LOOK BUILDER -->
     <section id="builder" class="reveal">
         <span class="section-label">Look Builder</span>
         <div class="builder-container">
             <div style="display:flex; flex-direction:column; gap:8px;">
-                <div class="item-row" onclick="sel('Aero Jacket — 145 000 ₽', this)"><img src="jacket.jpeg" class="item-thumb" alt="Aero Jacket"><b>Aero Jacket</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">145k ₽</span></div>
-                <div class="item-row" onclick="sel('Leather Bag — 120 000 ₽', this)"><img src="sumka.jpeg" class="item-thumb" alt="Leather Bag"><b>Leather Bag</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">120k ₽</span></div>
-                <div class="item-row" onclick="sel('Armor v1 — 180 000 ₽', this)"><img src="moto1.jpeg" class="item-thumb" alt="Armor v1"><b>Armor v1</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">180k ₽</span></div>
-                <div class="item-row" onclick="sel('Studio Shoes — 85 000 ₽', this)"><img src="tufli.jpeg" class="item-thumb" alt="Studio Shoes"><b>Studio Shoes</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">85k ₽</span></div>
+                <div class="item-row" onclick="sel('Aero Jacket — 145 000 ₽', this)"><img src="jacket.jpeg" class="item-thumb" alt=""><b>Aero Jacket</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">145k ₽</span></div>
+                <div class="item-row" onclick="sel('Leather Bag — 120 000 ₽', this)"><img src="sumka.jpeg" class="item-thumb" alt=""><b>Leather Bag</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">120k ₽</span></div>
+                <div class="item-row" onclick="sel('Armor v1 — 180 000 ₽', this)"><img src="moto1.jpeg" class="item-thumb" alt=""><b>Armor v1</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">180k ₽</span></div>
+                <div class="item-row" onclick="sel('Studio Shoes — 85 000 ₽', this)"><img src="tufli.jpeg" class="item-thumb" alt=""><b>Studio Shoes</b><span style="margin-left:auto; opacity:0.5; font-size:11px;">85k ₽</span></div>
             </div>
             <div style="background:var(--gray); border-radius:30px; display:flex; align-items:center; justify-content:center; padding:40px; text-align:center; min-height:300px;">
                 <div>
@@ -463,11 +227,11 @@
         </div>
     </section>
 
-    <!-- 6. 3D VIEWER -->
+    <!-- 3D VIEWER -->
     <section id="3d" class="reveal">
         <span class="section-label">3D Product Viewer</span>
         <div style="position:relative; max-width:1100px; margin:0 auto;">
-            <div id="viewer3d"><div class="viewer-hint">DRAG TO ROTATE &middot; SCROLL TO ZOOM</div></div>
+            <div id="viewer3d"><div class="viewer-hint">DRAG TO ROTATE · SCROLL TO ZOOM</div></div>
             <div class="viewer-nav" id="viewer-dots">
                 <div class="viewer-dot active" onclick="switchModel(0)"></div>
                 <div class="viewer-dot" onclick="switchModel(1)"></div>
@@ -477,7 +241,7 @@
         </div>
     </section>
 
-    <!-- 7. THE CLUB -->
+    <!-- THE CLUB -->
     <section id="club-section" class="reveal">
         <span class="section-label">Palermo [PRIVATE] Club</span>
         <div class="lock-overlay" id="club-lock">
@@ -492,7 +256,7 @@
         </div>
     </section>
 
-    <!-- 8. ORIGINS -->
+    <!-- ORIGINS -->
     <section id="origins" class="reveal">
         <span class="section-label">Palermo Origins</span>
         <div class="founders-grid">
@@ -510,7 +274,7 @@
         <div style="font-size:clamp(14px,2.5vw,20px); letter-spacing:15px; text-transform:uppercase; text-align:center; margin:80px 0; font-weight:200; border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:40px 0;">ENGINEERED SILENCE. BEYOND TECHNOLOGY.</div>
     </section>
 
-    <!-- 9. MAXXMOTO -->
+    <!-- MAXXMOTO -->
     <section id="maxxmoto" class="reveal">
         <span class="section-label">The Partnership: MaxxMoto</span>
         <div class="partner-grid">
@@ -519,7 +283,7 @@
         </div>
     </section>
 
-    <!-- 10. WEATHER DASHBOARD -->
+    <!-- WEATHER -->
     <section id="comfort" class="reveal">
         <span class="section-label">ENZO Climate Monitor</span>
         <div class="weather-dash" id="weather-dash">
@@ -532,16 +296,16 @@
         </div>
     </section>
 
-    <!-- 11. RUSSIA MAP (Leaflet) -->
+    <!-- RUSSIA MAP -->
     <section id="russia" class="reveal">
         <span class="section-label">Присутствие Palermo</span>
         <div style="max-width:1100px; margin:0 auto;">
             <div id="russia-map"></div>
-            <p style="text-align:center; font-size:10px; letter-spacing:2px; opacity:0.3; margin-top:12px;">20 точек присутствия — Западная и Центральная Россия</p>
+            <p style="text-align:center; font-size:10px; letter-spacing:2px; opacity:0.3; margin-top:12px;">22 точки — Россия · Запад · Центр · Italia</p>
         </div>
     </section>
 
-    <!-- 12. FAQ -->
+    <!-- FAQ -->
     <section id="faq" class="reveal">
         <span class="section-label">F.A.Q.</span>
         <div style="max-width:900px; margin:0 auto;">
@@ -555,328 +319,53 @@
             </div>
             <div class="faq-item" onclick="this.classList.toggle('active')">
                 <div class="faq-q">Что такое ENZO Lab?<span>+</span></div>
-                <div class="faq-a">ENZO — ИИ-ассистент Palermo. v3.2 использует HuggingFace AI и WeatherAPI.com.</div>
+                <div class="faq-a">ENZO — ИИ-ассистент Palermo. v3.2 использует WeatherAPI.com для погодозависимых рекомендаций.</div>
             </div>
             <div class="faq-item" onclick="this.classList.toggle('active')">
                 <div class="faq-q">Обмен и возврат<span>+</span></div>
                 <div class="faq-a">Возврат в течение 30 дней. Обмен размера — бесплатно через любой хаб.</div>
             </div>
         </div>
-        <div class="newsletter-box reveal">
-            <p style="font-size:11px; letter-spacing:3px; text-transform:uppercase; opacity:0.5; margin-bottom:20px;">Subscribe to ENZO feed</p>
-            <div style="display:flex; gap:10px;">
-                <input type="email" placeholder="your@email.com" style="flex:1; margin:0;">
-                <button class="btn-lux" style="width:auto; padding:16px 30px; margin:0;" onclick="subscribe()">→</button>
-            </div>
-        </div>
     </section>
 
-    <footer>
-        <p style="text-align:center; opacity:0.2; padding:60px; font-size:10px; letter-spacing:8px;">PALERMO STUDIO 2026</p>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-brand">PALERMO</div>
+                <p>Engineered Silence.<br>Beyond Technology.<br>Est. 2026 — Yoshkar-Ola.</p>
+            </div>
+            <div>
+                <h3>Shop</h3>
+                <a href="#collab">Collab</a>
+                <a href="#mainline">Essentials</a>
+                <a href="#builder">Look Builder</a>
+                <a href="#club-section">Club</a>
+            </div>
+            <div>
+                <h3>Lab</h3>
+                <a href="#lab">ENZO Neural</a>
+                <a href="#3d">3D Viewer</a>
+                <a href="#comfort">Climate</a>
+                <a href="#russia">Карта</a>
+            </div>
+            <div>
+                <h3>Company</h3>
+                <a href="#origins">Origins</a>
+                <a href="#maxxmoto">MaxxMoto</a>
+                <a href="#faq">F.A.Q.</a>
+                <p style="margin-top:8px;">info@palermo.studio</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PALERMO STUDIO. All rights reserved.</span>
+            <span>Powered by ENZO v3.2 · WeatherAPI · Leaflet · Three.js</span>
+        </div>
     </footer>
 
     <div id="toast">Ready</div>
 
-    <!-- THREE.JS 3D VIEWER -->
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-        const container = document.getElementById('viewer3d');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.set(0, 0.5, 6);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.2;
-        container.appendChild(renderer.domElement);
-
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; controls.dampingFactor = 0.08;
-        controls.autoRotate = true; controls.autoRotateSpeed = 0.6;
-        controls.minDistance = 3; controls.maxDistance = 10;
-        controls.maxPolarAngle = Math.PI * 0.7;
-
-        scene.add(new THREE.AmbientLight(0x222244, 0.5));
-        const key = new THREE.DirectionalLight(0xffffff, 2); key.position.set(5, 5, 5); scene.add(key);
-        const rim = new THREE.DirectionalLight(0x00f2ff, 1.5); rim.position.set(-3, 1, -3); scene.add(rim);
-
-        const particlesGeo = new THREE.BufferGeometry();
-        const count = 300; const pos = new Float32Array(count * 3);
-        for (let i = 0; i < count * 3; i += 3) {
-            pos[i] = (Math.random() - 0.5) * 8;
-            pos[i + 1] = (Math.random() - 0.5) * 8;
-            pos[i + 2] = (Math.random() - 0.5) * 4;
-        }
-        particlesGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const particles = new THREE.Points(particlesGeo, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.02, transparent: true, opacity: 0.5 }));
-        scene.add(particles);
-
-        const mainGroup = new THREE.Group(); scene.add(mainGroup);
-        const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(0.7, 0.18, 128, 32), new THREE.MeshPhysicalMaterial({ color: 0x111122, metalness: 0.9, roughness: 0.15, clearcoat: 0.3, clearcoatRoughness: 0.2 }));
-        mainGroup.add(knot);
-        const wire = new THREE.Mesh(new THREE.TorusKnotGeometry(0.72, 0.2, 64, 16), new THREE.MeshBasicMaterial({ color: 0x00f2ff, wireframe: true, transparent: true, opacity: 0.15 }));
-        mainGroup.add(wire);
-        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.03, 32, 100), new THREE.MeshStandardMaterial({ color: 0x00f2ff, metalness: 0.5, roughness: 0.3, emissive: 0x002233, emissiveIntensity: 0.5 }));
-        ring.rotation.x = Math.PI / 2; mainGroup.add(ring);
-
-        const textures = ['jacket.jpeg', 'moto1.jpeg', 'glovo.jpeg', 'tufli.jpeg'];
-        const cards = []; const loader = new THREE.TextureLoader();
-        textures.forEach((src, i) => {
-            const angle = (i / textures.length) * Math.PI * 2;
-            const geo = new THREE.PlaneGeometry(0.45, 0.6);
-            const tex = loader.load(src); tex.colorSpace = THREE.SRGBColorSpace;
-            const card = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide, roughness: 0.4, metalness: 0.1 }));
-            card.position.set(Math.cos(angle) * 1.5, 0, Math.sin(angle) * 1.5);
-            card.lookAt(0, 0, 0);
-            card.userData = { angle, radius: 1.5, y: 0 };
-            mainGroup.add(card); cards.push(card);
-        });
-
-        window.switchModel = (idx) => {
-            document.querySelectorAll('.viewer-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-            cards.forEach((card, i) => { card.userData.y = i === idx ? 0.6 : 0; });
-            const target = cards[idx];
-            if (target) { const wp = new THREE.Vector3(); target.getWorldPosition(wp); controls.target.lerp(wp, 0.5); }
-        };
-
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            const t = performance.now() * 0.001;
-            particles.rotation.y += 0.0003;
-            cards.forEach(card => {
-                card.userData.angle += 0.003;
-                const a = card.userData.angle, r = card.userData.radius;
-                card.position.x = Math.cos(a) * r; card.position.z = Math.sin(a) * r;
-                card.position.y += (card.userData.y - card.position.y) * 0.05;
-                card.lookAt(0, card.position.y, 0); card.rotation.z += 0.01;
-            });
-            knot.rotation.y += 0.005; wire.rotation.y += 0.005; ring.rotation.z += 0.002;
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        });
-    </script>
-
-    <!-- APP LOGIC -->
-    <script>
-        // ── BURGER ──
-        window.toggleBurger = () => {
-            document.getElementById('burger').classList.toggle('active');
-            document.getElementById('mobile-nav').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('active');
-        };
-        window.closeBurger = () => {
-            document.getElementById('burger').classList.remove('active');
-            document.getElementById('mobile-nav').classList.remove('open');
-            document.getElementById('overlay').classList.remove('active');
-        };
-
-        // ── CART ──
-        let cart = [];
-        window.buy = (n, p) => { cart.push({ n, p }); updateCart(); toast(n + " — added"); };
-        window.toggleCart = () => { closeBurger(); document.getElementById('side-cart').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-        window.toggleAuth = () => { closeBurger(); document.getElementById('auth-modal').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-        window.toggleSpecs = () => { closeBurger(); document.getElementById('spec-modal').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); };
-        window.toggleNight = () => { document.body.classList.toggle('night-mode'); };
-        window.closeAll = () => {
-            closeBurger();
-            ['side-cart', 'auth-modal', 'spec-modal'].forEach(id => document.getElementById(id).classList.remove('open'));
-            document.getElementById('overlay').classList.remove('active');
-        };
-
-        window.login = () => {
-            const email = document.getElementById('login-field').value.trim();
-            if (!email) { toast("Enter email"); return; }
-            const name = email.includes('stepan') ? 'Evsin Stepan' : email.split('@')[0];
-            document.getElementById('id-label').innerText = name;
-            document.getElementById('club-lock').classList.add('unlocked');
-            const inner = document.getElementById('club-inner');
-            inner.style.opacity = '1'; inner.style.filter = 'blur(0)';
-            toast("Welcome, " + name);
-            toggleAuth();
-        };
-
-        window.updateCart = () => {
-            const total = cart.reduce((s, i) => s + i.p, 0);
-            document.getElementById('cart-q').innerText = cart.length;
-            document.getElementById('cart-total').innerText = total.toLocaleString() + ' ₽';
-            const list = document.getElementById('cart-list');
-            if (cart.length === 0) {
-                list.innerHTML = '<p style="opacity:0.3; font-size:12px; text-align:center; margin-top:100px;">Empty</p>';
-            } else {
-                list.innerHTML = cart.map((i, idx) =>
-                    `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px; padding:10px; border:1px solid var(--border); border-radius:10px;"><span>${i.n}</span><span style="display:flex; align-items:center; gap:10px;">${i.p.toLocaleString()} ₽ <span style="cursor:pointer; opacity:0.3; font-size:14px;" onclick="removeItem(${idx})">&times;</span></span></div>`
-                ).join('');
-            }
-        };
-        window.removeItem = (idx) => { cart.splice(idx, 1); updateCart(); toast("Removed"); };
-        window.checkout = () => { if (cart.length === 0) { toast("Bag is empty"); return; } toast("Order placed."); cart = []; updateCart(); toggleCart(); };
-        window.toast = (m) => { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); clearTimeout(t._timeout); t._timeout = setTimeout(() => t.classList.remove('show'), 2500); };
-        window.selectSize = (el) => { el.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); };
-        window.subscribe = () => { toast("Subscribed"); };
-
-        // ── ENZO ──
-        let isMax = false;
-        window.enzoLog = (msg) => {
-            const log = document.getElementById('enzo-log');
-            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            log.innerHTML += `<div class="line"><span class="ts">[${time}]</span> ${msg}</div>`;
-            log.scrollTop = log.scrollHeight;
-        };
-        window.loadMax = () => { document.getElementById('v-port').src = 'max1.jpeg'; isMax = true; enzoLog('Прототип загружен.'); toast("Photo Loaded"); };
-        window.changeLight = (mode) => {
-            if (!isMax) { toast("Сначала загрузите фото"); return; }
-            const l = document.getElementById('ai-loader'), img = document.getElementById('v-port');
-            l.style.display = 'block'; img.style.opacity = '0.2';
-            enzoLog(`Сканирование в ${mode === 'night' ? 'ночном' : 'дневном'} спектре...`);
-            setTimeout(() => { img.src = (mode === 'night') ? 'max2.jpeg' : 'max1.jpeg'; img.style.opacity = '0.9'; l.style.display = 'none'; enzoLog('Сканирование завершено.'); }, 2500);
-        };
-        window.enzoDeepAnalysis = async () => {
-            enzoLog('🧠 Запуск Deep AI...');
-            const HF_TOKEN = document.getElementById('hf-token')?.value?.trim();
-            const weatherEl = document.getElementById('w-temp');
-            const tempText = weatherEl ? weatherEl.innerText : 'неизвестно';
-            const cartItems = cart.map(i => i.n).join(', ') || 'ничего';
-            const prompt = `<s>[INST] Ты — ENZO, ИИ-стилист Palermo Studio (Йошкар-Ола). Температура: ${tempText}. В корзине: ${cartItems}. Дай короткий (2-3 предложения) стильный совет по экипировке для мотоциклиста. Русский, уверенно, без маркдауна. [/INST]`;
-            try {
-                if (!HF_TOKEN) throw new Error('no token');
-                enzoLog('Запрос к HuggingFace...');
-                const resp = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1', {
-                    method: 'POST', headers: { 'Authorization': `Bearer ${HF_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 150, temperature: 0.8 } })
-                });
-                const data = await resp.json();
-                let text = Array.isArray(data) ? data[0]?.generated_text || '' : data.generated_text || '';
-                const idx = text.lastIndexOf('[/INST]');
-                if (idx !== -1) text = text.slice(idx + 7).trim();
-                enzoLog('✅ ENZO AI: ' + text);
-            } catch (e) {
-                enzoLog('⚠️ AI недоступен. Локальный анализ:');
-                const temp = parseInt(tempText);
-                const advice = !isNaN(temp) ? (temp < 0 ? 'Мороз — Aero Jacket + Electric Cyan.' : temp < 10 ? 'Прохладно — Armor v1 + Glovo Gloves.' : temp < 20 ? 'Комфорт — Studio Shirt + Leather Bag.' : 'Тепло — облегчённый комплект.') : 'Armor v2 — универсальное решение.';
-                enzoLog('✅ ' + advice);
-            }
-        };
-
-        // ── LOOK BUILDER ──
-        let sItems = [];
-        window.sel = (name, el) => {
-            el.classList.toggle('selected');
-            sItems.includes(name) ? sItems = sItems.filter(i => i !== name) : sItems.push(name);
-            const msg = document.getElementById('l-msg'), total = document.getElementById('l-total');
-            if (sItems.length > 0) {
-                msg.innerHTML = '<b>ENZO:</b> Анализ...'; msg.style.opacity = '1'; total.style.display = 'block';
-                total.innerText = '≈ ' + sItems.map(i => parseInt(i.match(/\d+/g).pop())).reduce((a, b) => a + b, 0).toLocaleString() + ' ₽';
-            } else { msg.innerHTML = 'Выберите элементы...'; msg.style.opacity = '0.5'; total.style.display = 'none'; }
-        };
-
-        // ── WEATHER (WeatherAPI.com) ──
-        async function fetchWeather() {
-            const WAPI_KEY = '0426384116734bb4a94183926263007';
-            try {
-                const resp = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WAPI_KEY}&q=Yoshkar-Ola&lang=ru&aqi=no`);
-                const data = await resp.json();
-                if (data.error) throw new Error(data.error.message);
-                const c = data.current;
-                const temp = Math.round(c.temp_c), feels = Math.round(c.feelslike_c);
-                const humidity = c.humidity, wind = Math.round(c.wind_kph / 3.6), uv = c.uv, label = c.condition.text;
-                document.getElementById('w-icon').innerHTML = `<img src="https:${c.condition.icon}" alt="${label}" style="width:70px;height:70px;">`;
-                document.getElementById('w-temp').innerHTML = `${temp > 0 ? '+' : ''}${temp}°C`;
-                document.getElementById('w-details').innerHTML = `${label} &middot; Ощущается ${feels > 0 ? '+' : ''}${feels}°C &middot; Влажность ${humidity}% &middot; Ветер ${wind} м/с &middot; UV ${uv}`;
-                let advice = temp <= -10 ? 'Экстремальный холод. Aero Jacket + Armor v2.' : temp <= 0 ? 'Морозно. Aero Jacket + Glovo Gloves.' : temp <= 10 ? 'Прохладно. Armor v1.' : temp <= 20 ? 'Комфорт. Studio Shirt + Leather Bag.' : temp <= 30 ? 'Тепло. Облегчённый силуэт.' : 'Жарко. Минимум слоёв.';
-                if (label.toLowerCase().includes('дожд') || label.toLowerCase().includes('ливень')) advice += ' Осадки — водоотталкивающая пропитка.';
-                if (wind >= 10) advice += ' Ветер — аэродинамика критична.';
-                if (uv >= 6) advice += ' UV высокий — защита.';
-                document.getElementById('w-advice').innerHTML = `<b>ENZO:</b> ${advice}`;
-                enzoLog(`Погода: ${label}, ${temp}°C (ощущается ${feels}°C), ветер ${wind} м/с.`);
-            } catch (e) {
-                document.getElementById('w-details').innerText = 'WeatherAPI недоступен.';
-                document.getElementById('w-advice').innerHTML = '<b>ENZO:</b> Сенсоры отключены.';
-            }
-        }
-
-        // ── LEAFLET RUSSIA MAP ──
-        function initMap() {
-            const map = L.map('russia-map', { zoomControl: true, scrollWheelZoom: true }).setView([56.5, 55], 4);
-            const isNight = document.body.classList.contains('night-mode');
-            L.tileLayer(isNight
-                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
-                maxZoom: 12
-            }).addTo(map);
-
-            // 20 markers — western/central Russia
-            const cities = [
-                { name: 'Москва', lat: 55.75, lng: 37.62 },
-                { name: 'Санкт-Петербург', lat: 59.93, lng: 30.34 },
-                { name: 'Нижний Новгород', lat: 56.33, lng: 44.00 },
-                { name: 'Казань', lat: 55.79, lng: 49.12 },
-                { name: 'Самара', lat: 53.20, lng: 50.15 },
-                { name: 'Воронеж', lat: 51.67, lng: 39.18 },
-                { name: 'Ростов-на-Дону', lat: 47.23, lng: 39.72 },
-                { name: 'Краснодар', lat: 45.04, lng: 38.98 },
-                { name: 'Волгоград', lat: 48.71, lng: 44.51 },
-                { name: 'Уфа', lat: 54.74, lng: 55.97 },
-                { name: 'Пермь', lat: 58.01, lng: 56.25 },
-                { name: 'Челябинск', lat: 55.16, lng: 61.44 },
-                { name: 'Йошкар-Ола', lat: 56.63, lng: 47.89 },
-                { name: 'Тула', lat: 54.20, lng: 37.62 },
-                { name: 'Ярославль', lat: 57.63, lng: 39.87 },
-                { name: 'Рязань', lat: 54.63, lng: 39.69 },
-                { name: 'Тверь', lat: 56.86, lng: 35.92 },
-                { name: 'Калуга', lat: 54.53, lng: 36.28 },
-                { name: 'Владимир', lat: 56.14, lng: 40.40 },
-                { name: 'Сочи', lat: 43.59, lng: 39.73 },
-            ];
-
-            const palermoIcon = L.divIcon({
-                className: 'palermo-marker',
-                html: '<div style="width:12px;height:12px;background:var(--beige);border:2px solid var(--text);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 8px rgba(210,180,140,0.6);"></div>',
-                iconSize: [12, 12], iconAnchor: [6, 6]
-            });
-
-            cities.forEach(c => {
-                L.marker([c.lat, c.lng], { icon: palermoIcon })
-                    .addTo(map)
-                    .bindPopup(`<b>${c.name}</b><br><span style="font-size:10px;opacity:0.6;">Palermo Hub</span>`);
-            });
-        }
-
-        // Reload map on theme change
-        const origToggleNight = window.toggleNight;
-        window.toggleNight = () => {
-            origToggleNight();
-            setTimeout(() => {
-                const mapEl = document.getElementById('russia-map');
-                if (mapEl && mapEl._leaflet_id) {
-                    mapEl._leaflet_map.remove();
-                    delete mapEl._leaflet_id;
-                    delete mapEl._leaflet_map;
-                }
-                initMap();
-            }, 100);
-        };
-
-        setTimeout(() => { enzoLog('ENZO v3.2 инициализирован.'); enzoLog('Сенсоры: HuggingFace AI + WeatherAPI.'); }, 300);
-        fetchWeather();
-        initMap();
-
-        // ── SCROLL REVEAL ──
-        const observer = new IntersectionObserver((e) => { e.forEach(x => { if (x.isIntersecting) x.target.classList.add('visible'); }); }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
-        window.onload = () => { window.scrollTo(0, 0); };
-    </script>
+    <script src="js/app.js"></script>
+    <script type="module" src="js/three-viewer.js"></script>
 </body>
 </html>
