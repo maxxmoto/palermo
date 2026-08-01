@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>PALERMO STUDIO | OS 2026</title>
+    <style>
+        :root {
+            --bg: #ffffff; --text: #000000; --border: #e8e8e8;
+            --gray: #f9f9f9; --beige: #D2B48C; --transition: all 0.6s cubic-bezier(0.15, 0, 0.15, 1);
+            --electric-cyan: #00f2ff;
+            --specs-bg: #f4f1ec; 
+        }
+        body.night-mode { --bg: #0d0d0d; --text: #ffffff; --border: #222; --gray: #151515; --specs-bg: #1a1815; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--text); transition: background 0.5s; overflow-x: hidden; scroll-behavior: smooth; }
+        .grain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url('https://vercel.app'); opacity: 0.03; pointer-events: none; z-index: 9999; }
+
+        /* HEADER */
+        header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 25px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(var(--bg), 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .logo-top { font-size: 20px; font-weight: 700; letter-spacing: 12px; text-transform: uppercase; }
+        .nav-top { display: flex; gap: 10px; align-items: center; }
+        .btn-mode { cursor: pointer; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--text); padding: 8px 18px; border-radius: 30px; transition: 0.3s; background: none; color: var(--text); font-weight: bold; white-space: nowrap; }
+
+        /* SIDEBARS */
+        #side-cart, #auth-modal, #spec-modal { position: fixed; right: -450px; top: 0; width: 450px; height: 100%; background: var(--bg); z-index: 10001; border-left: 1px solid var(--border); padding: 50px; transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -20px 0 50px rgba(0,0,0,0.1); }
+        #side-cart.open, #auth-modal.open, #spec-modal.open { right: 0; }
+        .close-trigger { cursor: pointer; opacity: 0.4; font-size: 10px; letter-spacing: 2px; margin-bottom: 40px; display: block; }
+
+        /* HERO */
+        .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .hero-title-wrap { position: relative; padding-bottom: 25px; margin-bottom: 20px; }
+        .hero-title { font-size: clamp(50px, 15vw, 150px); font-weight: 100; letter-spacing: 35px; text-transform: uppercase; transform: translateX(17px); }
+        .hero-underline { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--text); opacity: 0.15; transform: scaleX(0.7); }
+        .hero-nav { display: flex; gap: 25px; list-style: none; margin-top: 50px; flex-wrap: wrap; justify-content: center; }
+        .hero-nav a { text-decoration: none; color: var(--text); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; }
+
+        /* CATALOG - ZOOM GEAR ONLY */
+        section { padding: 120px 5%; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 10px; letter-spacing: 10px; text-transform: uppercase; text-align: center; display: block; margin-bottom: 60px; opacity: 0.5; font-weight: bold; }
+        .catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+        .card { text-align: center; margin-bottom: 30px; }
+        .img-wrap { width: 100%; height: 500px; border-radius: 40px; border: 1px solid var(--border); position: relative; background: var(--gray); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .gear-img { max-width: 90%; max-height: 90%; object-fit: contain; transition: var(--transition); }
+        .card:hover .gear-img { transform: scale(1.1); }
+        .price-tag { font-size: 11px; letter-spacing: 2px; margin: 15px 0; font-weight: bold; opacity: 0.6; }
+
+        /* LOOK BUILDER SELECTION */
+        .builder-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
+        .item-row { display: flex; align-items: center; gap: 25px; padding: 25px; border: 1px solid var(--border); border-radius: 30px; cursor: pointer; transition: 0.3s; margin-bottom: 15px; background: var(--bg); color: var(--text); }
+        .item-row.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
+        .item-thumb { width: 60px; height: 60px; border-radius: 12px; object-fit: contain; background: #fff; padding: 5px; }
+
+        /* THE CLUB */
+        #club-section { background: var(--gray); text-align: center; position: relative; min-height: 400px; border-radius: 80px; margin: 0 5%; }
+        .lock-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: var(--gray); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; transition: 1s; border-radius: 80px; }
+        .lock-overlay.unlocked { opacity: 0; pointer-events: none; transform: translateY(-50px); }
+        .tech-lock { width: 60px; height: 60px; border: 2px solid var(--text); border-radius: 50%; margin-bottom: 20px; position: relative; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,0,0,0.1); } 100% { box-shadow: 0 0 0 30px rgba(0,0,0,0); } }
+
+        /* ORIGINS - ALIGNED NO ZOOM */
+        .founders-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 80px; align-items: start; }
+        .f-img-box { width: 100%; height: 550px; background: var(--gray); border-radius: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--border); }
+        .f-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: grayscale(1); transition: 1s; }
+        .f-img-box:hover img { filter: grayscale(0); }
+        .founder-name { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-top: 25px; font-weight: bold; text-align: center; }
+
+        .fob-showcase { width: 100%; height: 700px; border-radius: 40px; overflow: hidden; border: 1px solid var(--border); background: var(--gray); display: flex; align-items: center; justify-content: center; }
+        .fob-showcase img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: 1.5s; }
+        .fob-showcase:hover img { filter: grayscale(0); }
+
+        /* SCANNER */
+        .lab-box { background: var(--gray); border-radius: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 60px; align-items: center; }
+        .mirror { height: 650px; border-radius: 40px; background: #000; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+        .mirror img { max-width: 100%; max-height: 100%; object-fit: contain; opacity: 0.9; }
+        .scan-line { width: 100%; height: 2px; background: #fff; position: absolute; top: 0; left: 0; animation: scanAnim 4s infinite linear; opacity: 0.3; z-index: 25; box-shadow: 0 0 15px #fff; }
+        @keyframes scanAnim { 0%, 100% { top: 0; } 50% { top: 100%; } }
+        #ai-loader { display: none; position: absolute; width: 60px; height: 60px; border: 3px solid rgba(210, 180, 140, 0.1); border-top: 3px solid var(--beige); border-radius: 50%; animation: spin 1s infinite; z-index: 30; }
+
+        /* UTILS */
+        .btn-lux { width: 100%; padding: 22px; background: var(--text); color: var(--bg); border: none; border-radius: 20px; font-size: 10px; font-weight: bold; letter-spacing: 5px; text-transform: uppercase; margin-top: 20px; cursor: pointer; }
+        .faq-item { border-bottom: 1px solid var(--border); padding: 35px 0; cursor: pointer; }
+        .faq-a { font-size: 13px; line-height: 2; opacity: 0; max-height: 0; overflow: hidden; transition: 0.5s; }
+        .faq-item.active .faq-a { opacity: 0.5; max-height: 300px; padding-top: 25px; }
+        #toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 20px 40px; border-radius: 100px; font-size: 11px; z-index: 20000; transition: 0.5s; }
+        #toast.show { bottom: 40px; }
+    </style>
+</head>
+<body id="body">
+    <div class="grain"></div>
+    <header>
+        <div class="logo-top">PALERMO</div>
+        <div class="nav-top">
+            <div class="btn-mode" onclick="toggleThermal()">Thermal</div>
+            <div class="btn-mode" onclick="document.body.classList.toggle('night-mode')">Atmosphere</div>
+            <div class="btn-mode" onclick="document.getElementById('spec-modal').classList.toggle('open')">Specs</div>
+            <div class="btn-mode" id="id-label" onclick="toggleAuth()">ID</div>
+            <div class="btn-mode" onclick="toggleCart()">Bag (<span id="cart-q">0</span>)</div>
+        </div>
+    </header>
+
+    <div id="spec-modal"><span class="close-trigger" onclick="this.parentElement.classList.remove('open')">← BACK</span><h2>Specs</h2><div style="background:var(--specs-bg); padding:30px; margin-top:20px; border-radius:15px;"><p style="font-size:13px; line-height:2.5; color:var(--beige);">• <b>Drag:</b> 0.24 Cd<br>• <b>Series:</b> Alpha V1</p></div></div>
+    <div id="auth-modal"><span class="close-trigger" onclick="toggleAuth()">← BACK</span><h2>Identity</h2><input style="width:100%; padding:18px; margin:20px 0; border-radius:12px; border:1px solid var(--border);" type="text" placeholder="EMAIL" id="login-field"><button class="btn-lux" onclick="login()">Sync</button></div>
+    <div id="side-cart"><span class="close-trigger" onclick="toggleCart()">← CLOSE</span><h2>Bag</h2><div id="cart-list"></div><div style="position:absolute; bottom:50px; width:calc(100% - 100px);"><div style="display:flex; justify-content:space-between; margin-bottom:20px;"><b>Total:</b><b id="cart-total">0 ₽</b></div><button class="btn-lux" style="margin:0" onclick="checkout()">Checkout</button></div></div>
+
+    <!-- 1. HERO -->
+    <section class="hero">
+        <div class="hero-title-wrap"><h1 class="hero-title">PALERMO</h1><div class="hero-underline"></div></div>
+        <ul class="hero-nav"><li><a href="#collab">Collab</a></li><li><a href="#mainline">Essentials</a></li><li><a href="#lab">ENZO</a></li><li><a href="#builder">Builder</a></li><li><a href="#club-section">Club</a></li><li><a href="#origins">Origins</a></li><li><a href="#maxxmoto">MaxxMoto</a></li></ul>
+    </section>
+
+    <!-- 2. COLLAB -->
+    <section id="collab">
+        <h2 style="font-family:'Arial Black'; font-style:italic; font-weight:900; font-size:32px; text-transform:uppercase; text-align:center; margin-bottom:50px; background:linear-gradient(90deg, var(--text), #999); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Palermo x MaxxMoto</h2>
+        <div class="catalog">
+            <div class="card"><div class="img-wrap"><img src="jacket.jpeg" class="gear-img"></div><div class="price-tag">145 000 ₽</div><button class="btn-lux" onclick="buy('Aero Jacket', 145000)">Add to bag</button></div>
+            <div class="card"><div class="img-wrap"><img src="glovo.jpeg" class="gear-img"></div><div class="price-tag">32 000 ₽</div><button class="btn-lux" onclick="buy('Glovo Gloves', 32000)">Add to bag</button></div>
+            <div class="card"><div class="img-wrap"><img src="moto1.jpeg" class="gear-img"></div><div class="price-tag">180 000 ₽</div><button class="btn-lux" onclick="buy('Armor v1', 180000)">Add to bag</button></div>
+            <div class="card"><div class="img-wrap"><img src="moto2.jpeg" class="gear-img"></div><div class="price-tag">195 000 ₽</div><button class="btn-lux" onclick="buy('Armor v2', 195000)">Add to bag</button></div>
+        </div>
+    </section>
+
+    <!-- 3. ESSENTIALS -->
+    <section id="mainline">
+        <span class="section-label">Palermo Essentials</span>
+        <div class="catalog">
+            <div class="card"><div class="img-wrap"><img src="shirt.jpeg" class="gear-img"></div><div class="price-tag">45 000 ₽</div><button class="btn-lux" onclick="buy('Studio Shirt', 45000)">Add to bag</button></div>
+            <div class="card"><div class="img-wrap"><img src="sumka.jpeg" class="gear-img"></div><div class="price-tag">120 000 ₽</div><button class="btn-lux" onclick="buy('Leather Bag', 120000)">Add to bag</button></div>
+            <div class="card"><div class="img-wrap"><img src="tufli.jpeg" class="gear-img"></div><div class="price-tag">85 000 ₽</div><button class="btn-lux" onclick="buy('Studio Shoes', 85000)">Add to bag</button></div>
+        </div>
+    </section>
+
+    <!-- 4. ENZO SCANNER -->
+    <section id="lab">
+        <span class="section-label">ENZO Neural Lab</span>
+        <div class="lab-box">
+            <div class="mirror"><div class="scan-line"></div><div id="ai-loader"></div><img src="robot.jpg" id="v-port"></div>
+            <div><p id="enzo-text" style="font-size:16px; line-height:2; border-left:2px solid var(--text); padding-left:30px; margin-bottom:30px;"><b>ENZO:</b> Оптические системы активны. Загрузите прототип.</p>
+                <div style="display:flex; gap:10px; margin-bottom:20px;"><button class="btn-lux" style="margin:0; padding:10px 20px;" onclick="changeLight('day')">Daylight</button><button class="btn-lux" style="margin:0; padding:10px 20px;" onclick="changeLight('night')">Night Scan</button></div>
+                <button class="btn-lux" style="background:none; border:1px dashed var(--text); color:var(--text);" onclick="loadMax()">Load Photo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. LOOK BUILDER -->
+    <section id="builder">
+        <span class="section-label">Look Builder</span>
+        <div class="builder-container">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div class="item-row" onclick="sel('Aero Jacket', this)"><img src="jacket.jpeg" class="item-thumb"><b>Aero Jacket</b></div>
+                <div class="item-row" onclick="sel('Leather Bag', this)"><img src="sumka.jpeg" class="item-thumb"><b>Leather Bag</b></div>
+            </div>
+            <div style="background:var(--gray); border-radius:40px; display:flex; align-items:center; justify-content:center; padding:40px; text-align:center;"><p id="l-msg">Выберите элементы...</p></div>
+        </div>
+    </section>
+
+    <!-- 6. THE CLUB -->
+    <section id="club-section">
+        <span class="section-label">Palermo [PRIVATE] Club</span>
+        <div class="lock-overlay" id="club-lock"><div class="tech-lock"></div><h2 style="letter-spacing:5px;">Identity Required</h2><button class="btn-lux" onclick="toggleAuth()" style="width:auto; padding:15px 40px; margin-top:20px;">Authorize</button></div>
+        <div id="club-inner" style="opacity:0.1; filter:blur(10px); transition:1.5s; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:30px; max-width:1200px; margin:0 auto;">
+            <div style="border:1px solid var(--border); padding:40px; border-radius:30px;"><b>STATUS:</b> LEVEL ALPHA</div>
+            <div style="border:1px solid var(--border); padding:40px; border-radius:30px;"><b>OFFER:</b> -15% SITEWIDE</div>
+            <div style="border:1px solid var(--border); padding:40px; border-radius:30px;"><b>INSIDER:</b> V2 CONCEPT</div>
+        </div>
+    </section>
+
+    <!-- 7. ORIGINS -->
+    <section id="origins">
+        <span class="section-label">Palermo Origins</span>
+        <div class="founders-grid">
+            <div style="text-align:center;"><div class="f-img-box"><img src="f1.jpeg"></div><p class="founder-name">Евсин Степан Витальевич</p></div>
+            <div style="text-align:center;"><div class="f-img-box"><img src="f2.jpeg"></div><p class="founder-name">Ульянец Максим Владиславович</p></div>
+        </div>
+        <p style="max-width:850px; margin:40px auto; font-size:18px; line-height:2.2; text-align:center; font-weight:300;">Palermo Studio возникла на стыке холодной точности и дикой скорости.</p>
+        <div class="fob-showcase"><img src="fob.jpeg"></div>
+        <div style="font-size: clamp(14px, 2.5vw, 20px); letter-spacing: 20px; text-transform: uppercase; text-align: center; margin: 80px 0; font-weight: 200; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 0;">ENGINEERED SILENCE. BEYOND TECHNOLOGY.</div>
+    </section>
+
+    <!-- 8. MAXXMOTO -->
+    <section id="maxxmoto">
+        <span class="section-label">The Partnership: MaxxMoto</span>
+        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:80px; align-items:center;">
+            <div style="height:650px; border-radius:40px; border:1px solid var(--border); overflow:hidden; background:#000; display:flex; align-items:center; justify-content:center;"><img src="maksim.jpeg" style="width:100%; height:100%; object-fit:cover; filter:grayscale(1); transition:1s;" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(1)'"></div>
+            <div style="font-size: 20px; line-height: 1.8; font-weight: 300; border-left: 3px solid var(--text); padding-left: 40px;">MaxxMoto — крупнейший сейлер мототехники, базирующийся в Йошкар-Оле. Обладая объемами поставок, исчисляемыми миллионами рублей, компания стала ключевым партнером Palermo Studio. Этот раздел посвящен синергии инженерного мастерства и высоких продаж, которые лежат в основе нашего общего успеха.</div>
+        </div>
+    </section>
+
+    <!-- 9. WEATHER & MAP -->
+    <section id="comfort"><div style="display:flex; align-items:center; gap:60px; justify-content:center; flex-wrap:wrap;"><div style="font-size:80px; font-weight:100; color:var(--electric-cyan); text-shadow:0 0 30px rgba(0, 242, 255, 0.3);">-2°C</div><p style="max-width:500px; font-size:16px; line-height:1.8; border-left:2px solid var(--text); padding-left:25px;"><b>ENZO:</b> В Йошкар-Оле мороз. Система активировала Electric Cyan режим.</p></div></section>
+    <section id="stores"><div style="height:700px; border-radius:40px; overflow:hidden; border:1px solid var(--border);"><img src="map.jpg" style="width:100%; height:100%; object-fit:contain;"></div></section>
+
+    <!-- 10. FAQ -->
+    <section id="faq">
+        <span class="section-label">F.A.Q.</span>
+        <div style="max-width: 1000px; margin: 0 auto;">
+            <div class="faq-item" onclick="this.classList.toggle('active')"><div style="display:flex; justify-content:space-between; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Доставка и логистика<span>+</span></div><div class="faq-a">Доставка осуществляется из хаба в Йошкар-Оле в течение 3-7 дней по всему миру.</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('active')"><div style="display:flex; justify-content:space-between; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Гарантия на MaxxMoto Gear<span>+</span></div><div class="faq-a">Вся экипировка проходит 12 этапов тестирования и имеет пожизненную гарантию.</div></div>
+            <div class="faq-item" onclick="this.classList.toggle('active')"><div style="display:flex; justify-content:space-between; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Что такое ENZO Lab?<span>+</span></div><div class="faq-a">Это проприетарный ИИ-ассистент для калибровки силуэта и подбора материалов.</div></div>
+        </div>
+    </section>
+
+    <footer><p style="text-align:center; opacity:0.2; padding:80px; font-size:10px; letter-spacing:10px;">PALERMO STUDIO 2026</p></footer>
+    <div id="toast">Ready</div>
+
+    <script>
+        let cart = [];
+        function buy(n, p) { cart.push({n, p}); updateCart(); toast(n + " Added"); }
+        function toggleCart() { document.getElementById('side-cart').classList.toggle('open'); }
+        function toggleAuth() { document.getElementById('auth-modal').classList.toggle('open'); }
+        function login() { 
+            toast("Welcome, Evsin Stepan"); 
+            document.getElementById('id-label').innerText = "Evsin Stepan";
+            document.getElementById('club-lock').classList.add('unlocked');
+            document.getElementById('club-inner').style.opacity = "1"; document.getElementById('club-inner').style.filter = "blur(0)";
+            toggleAuth(); 
+        }
+        function updateCart() {
+            const list = document.getElementById('cart-list');
+            const total = cart.reduce((s, i) => s + i.p, 0);
+            document.getElementById('cart-q').innerText = cart.length;
+            document.getElementById('cart-total').innerText = total.toLocaleString() + " ₽";
+            list.innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:13px;"><span>${i.n}</span><span>${i.p.toLocaleString()} ₽</span></div>`).join('');
+        }
+        function checkout() { toast("Success"); cart=[]; updateCart(); toggleCart(); }
+        function toast(m) { const t = document.getElementById('toast'); t.innerText = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+        function toggleThermal() { document.getElementById('body').classList.toggle('thermal-active'); }
+        let isMax = false;
+        function loadMax() { document.getElementById('v-port').src = "max1.jpeg"; isMax = true; toast("Photo Loaded"); }
+        function changeLight(m) {
+            if(!isMax) return;
+            const l = document.getElementById('ai-loader'); const img = document.getElementById('v-port');
+            l.style.display = "block"; img.style.opacity = "0.2";
+            setTimeout(() => { img.src = (m === 'night') ? "max2.jpeg" : "max1.jpeg"; img.style.opacity = "0.9"; l.style.display = "none"; }, 3000);
+        }
+        let sItems = [];
+        function sel(n, e) {
+            e.classList.toggle('selected');
+            if(sItems.includes(n)) sItems = sItems.filter(i => i !== n); else sItems.push(n);
+            document.getElementById('l-msg').innerHTML = sItems.length > 0 ? `<b>ENZO:</b> Сочетание анализируется...` : "Выберите элементы...";
+        }
+        window.onload = () => { window.scrollTo(0,0); };
+    </script>
+</body>
+</html>
