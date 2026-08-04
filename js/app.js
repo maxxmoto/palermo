@@ -405,6 +405,54 @@ setTimeout(function () {
 
 fetchWeather();
 initMap();
+loadDummyProducts();
+
+// ── DUMMYJSON PRODUCTS ──
+function loadDummyProducts() {
+    var catUrl = 'https://dummyjson.com/products/category/';
+    var cats = ['mens-shirts', 'mens-shoes', 'womens-dresses', 'womens-bags', 'sunglasses', 'motorcycle'];
+    var all = [];
+    var done = 0;
+
+    cats.forEach(function (cat) {
+        fetch(catUrl + cat)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var items = (data.products || []).slice(0, 2);
+                items.forEach(function (p) { p._cat = cat; });
+                all = all.concat(items);
+                done++;
+                if (done === cats.length) renderDummy(all.slice(0, 9));
+            })
+            .catch(function () {
+                done++;
+                if (done === cats.length) renderDummy(all.slice(0, 9));
+            });
+    });
+}
+
+function renderDummy(products) {
+    var container = document.getElementById('dummy-catalog');
+    if (!container) return;
+    if (products.length === 0) {
+        container.innerHTML = '<p style="grid-column:1/-1; text-align:center; opacity:0.3;">Нет товаров</p>';
+        return;
+    }
+    container.innerHTML = products.map(function (p) {
+        var price = Math.round(p.price * 100);
+        var desc = p.description || '';
+        if (desc.length > 100) desc = desc.slice(0, 97) + '...';
+        return '<div class="card">' +
+            '<div class="img-wrap"><img src="' + p.thumbnail + '" class="gear-img" alt="' + p.title + '" loading="lazy" decoding="async"></div>' +
+            '<div class="card-body">' +
+            '<div class="price-tag">' + p.title + '</div>' +
+            '<p style="font-size:9px; opacity:0.35; line-height:1.4; margin-bottom:8px; padding:0 5px;">' + desc + '</p>' +
+            '<div class="price-tag" style="margin:0 0 10px;">' + price.toLocaleString() + ' ₽</div>' +
+            '</div>' +
+            '<div class="card-actions"><button class="btn-lux" onclick="buy(\'' + p.title.replace(/'/g, "\\'") + '\', ' + price + ')">Add to bag</button></div>' +
+            '</div>';
+    }).join('');
+}
 
 // Scroll reveal
 var observer = new IntersectionObserver(function (entries) {

@@ -60,7 +60,7 @@
     <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
     <header>
-        <div class="logo-top">PALERMO</div>
+        <img src="palermologotip.png" alt="PALERMO" class="logo-img">
         <nav class="nav-top" id="desktop-nav">
             <div class="btn-mode" onclick="toggleNight()">Atmosphere</div>
             <div class="btn-mode" onclick="toggleSpecs()">Specs</div>
@@ -76,6 +76,7 @@
         <button class="burger-close" onclick="closeBurger()" aria-label="Close">✕</button>
         <a href="#collab" onclick="closeBurger()">Collab</a>
         <a href="#mainline" onclick="closeBurger()">Essentials</a>
+        <a href="#items" onclick="closeBurger()">Collection</a>
         <a href="#lab" onclick="closeBurger()">ENZO</a>
         <a href="#builder" onclick="closeBurger()">Builder</a>
         <a href="#3d" onclick="closeBurger()">3D View</a>
@@ -126,12 +127,13 @@
     <!-- HERO -->
     <section class="hero reveal">
         <div class="hero-title-wrap">
-            <h1 class="hero-title">PALERMO</h1>
+            <h1 class="hero-title">P A<span class="logo-l">L</span><span class="logo-e">E</span><span class="logo-r">R</span>MO</h1>
             <div class="hero-underline"></div>
         </div>
         <ul class="hero-nav">
             <li><a href="#collab">Collab</a></li>
             <li><a href="#mainline">Essentials</a></li>
+            <li><a href="#items">Collection</a></li>
             <li><a href="#lab">ENZO</a></li>
             <li><a href="#builder">Builder</a></li>
             <li><a href="#3d">3D View</a></li>
@@ -220,6 +222,14 @@
                 </div>
                 <div class="card-actions"><button class="btn-lux" onclick="buy('Studio Shoes', 85000)">Add to bag</button></div>
             </div>
+        </div>
+    </section>
+
+    <!-- DUMMYJSON ITEMS -->
+    <section id="items" class="reveal">
+        <span class="section-label">Palermo Collection</span>
+        <div class="catalog" id="dummy-catalog">
+            <p style="grid-column:1/-1; text-align:center; opacity:0.3;">Загрузка товаров...</p>
         </div>
     </section>
 
@@ -399,6 +409,7 @@
                 <h3>Shop</h3>
                 <a href="#collab">Collab</a>
                 <a href="#mainline">Essentials</a>
+                <a href="#items">Collection</a>
                 <a href="#builder">Look Builder</a>
                 <a href="#club-section">Club</a>
             </div>
