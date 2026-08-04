@@ -409,26 +409,35 @@ loadDummyProducts();
 
 // ── DUMMYJSON PRODUCTS ──
 function loadDummyProducts() {
-    var catUrl = 'https://dummyjson.com/products/category/';
-    var cats = ['mens-shirts', 'mens-shoes', 'womens-dresses', 'womens-bags', 'sunglasses', 'motorcycle'];
-    var all = [];
-    var done = 0;
-
-    cats.forEach(function (cat) {
-        fetch(catUrl + cat)
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-                var items = (data.products || []).slice(0, 2);
-                items.forEach(function (p) { p._cat = cat; });
-                all = all.concat(items);
-                done++;
-                if (done === cats.length) renderDummy(all.slice(0, 9));
-            })
-            .catch(function () {
-                done++;
-                if (done === cats.length) renderDummy(all.slice(0, 9));
+    fetch('https://dummyjson.com/products?limit=0')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var total = data.total || 194;
+            fetch('https://dummyjson.com/products?limit=' + total)
+                .then(function (r2) { return r2.json(); })
+                .then(function (all) {
+                    var products = (all.products || []).filter(function (p) {
+                        var cat = (p.category || '').toLowerCase();
+                        return cat.indexOf('watch') === -1 && cat.indexOf('jewellery') === -1;
+                    });
+                    renderDummy(products);
+                });
+        })
+        .catch(function () {
+            var cats = ['mens-shirts', 'mens-shoes', 'womens-dresses', 'womens-bags', 'womens-shoes', 'womens-dresses', 'tops', 'sunglasses', 'motorcycle', 'automotive', 'fragrances', 'skincare', 'laptops'];
+            var all = [];
+            var done = 0;
+            cats.forEach(function (cat) {
+                fetch('https://dummyjson.com/products/category/' + cat)
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        all = all.concat(data.products || []);
+                        done++;
+                        if (done === cats.length) renderDummy(all);
+                    })
+                    .catch(function () { done++; if (done === cats.length) renderDummy(all); });
             });
-    });
+        });
 }
 
 function renderDummy(products) {
