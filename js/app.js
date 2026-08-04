@@ -416,7 +416,7 @@ function loadDummyProducts() {
                         var cat = (p.category || '').toLowerCase();
                         return cat.indexOf('watch') === -1 && cat.indexOf('jewellery') === -1;
                     });
-                    renderDummy(products);
+                    renderDummy(products.slice(0, 20));
                 });
         })
         .catch(function () {
@@ -429,9 +429,9 @@ function loadDummyProducts() {
                     .then(function (data) {
                         all = all.concat(data.products || []);
                         done++;
-                        if (done === cats.length) renderDummy(all);
+                        if (done === cats.length) renderDummy(all.slice(0, 20));
                     })
-                    .catch(function () { done++; if (done === cats.length) renderDummy(all); });
+                    .catch(function () { done++; if (done === cats.length) renderDummy(all.slice(0, 20)); });
             });
         });
 }
