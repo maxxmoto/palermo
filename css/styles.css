@@ -31,10 +31,6 @@ header {
     border-bottom: 1px solid var(--border);
 }
 .logo-img { height: 28px; width: auto; display: block; }
-.logo-l { color: #008C45; }
-.logo-e { color: #FFFFFF; -webkit-text-stroke: 1.5px #000; paint-order: stroke fill; }
-.logo-r { color: #CD212A; }
-body.night-mode .logo-e { -webkit-text-stroke: 1.5px #fff; }
 .nav-top { display: flex; gap: 8px; align-items: center; }
 .btn-mode {
     cursor: pointer; font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
