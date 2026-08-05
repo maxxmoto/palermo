@@ -405,22 +405,17 @@ loadDummyProducts();
 
 // ── DUMMYJSON PRODUCTS ──
 function loadDummyProducts() {
-    fetch('https://dummyjson.com/products?limit=0')
+    fetch('https://dummyjson.com/products?limit=100&skip=0')
         .then(function (r) { return r.json(); })
         .then(function (data) {
-            var total = data.total || 194;
-            fetch('https://dummyjson.com/products?limit=' + total)
-                .then(function (r2) { return r2.json(); })
-                .then(function (all) {
-                    var products = (all.products || []).filter(function (p) {
-                        var cat = (p.category || '').toLowerCase();
-                        return cat.indexOf('watch') === -1 && cat.indexOf('jewellery') === -1;
-                    });
-                    renderDummy(products.slice(0, 20));
-                });
+            var products = (data.products || []).filter(function (p) {
+                var cat = (p.category || '').toLowerCase();
+                return cat.indexOf('watch') === -1 && cat.indexOf('jewellery') === -1;
+            });
+            renderDummy(products.slice(0, 20));
         })
         .catch(function () {
-            var cats = ['mens-shirts', 'mens-shoes', 'womens-dresses', 'womens-bags', 'womens-shoes', 'womens-dresses', 'tops', 'sunglasses', 'motorcycle', 'automotive', 'fragrances', 'skincare', 'laptops'];
+            var cats = ['mens-shirts', 'mens-shoes', 'womens-dresses', 'womens-bags', 'womens-shoes', 'tops', 'sunglasses', 'motorcycle', 'automotive', 'fragrances', 'skincare'];
             var all = [];
             var done = 0;
             cats.forEach(function (cat) {
